@@ -16,6 +16,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/krub";
 import { ThemeProvider } from "@/context/ThemeContext";
+import ThemedContainer from "@/components/ThemedContainer";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -59,10 +60,15 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider>
+      {/* <ThemedContainer> */}
       <Stack initialRouteName="main/(tabs)">
-        <Stack.Screen name="main/(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="main/(tabs)"
+          options={{ headerShown: false, navigationBarHidden: true }}
+        />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
+      {/* </ThemedContainer> */}
     </ThemeProvider>
   );
 }

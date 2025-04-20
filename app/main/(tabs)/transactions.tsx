@@ -4,49 +4,56 @@ import AppText from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import TransactionList from "@/components/TransactionList";
 import { transactions } from "@/data/sample";
+import ThemedContainer from "@/components/ThemedContainer";
 
 export default function TransactionsTab() {
   return (
-    <ScrollView style={{ flex: 1 }}>
-      {/* Header */}
-      <View style={{ rowGap: 20, padding: 20 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 20,
-          }}
-        >
-          <AppText>Transaction History</AppText>
+    <ThemedContainer>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        {/* Header */}
+        <View style={{ rowGap: 20, paddingTop: 60 }}>
           <View
-            style={{ flexDirection: "row", alignItems: "center", columnGap: 5 }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 20,
+            }}
           >
-            <Ionicons name="download-outline" size={18} color="blue" />
-            <AppText style={{ fontSize: 12 }}>Download</AppText>
+            <AppText>Transaction History</AppText>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                columnGap: 5,
+              }}
+            >
+              <Ionicons name="download-outline" size={18} color="blue" />
+              <AppText style={{ fontSize: 12 }}>Download</AppText>
+            </View>
           </View>
-        </View>
 
-        {/* Filter */}
-        {/* <View style={{ flexDirection: "row", columnGap: 10 }}>
+          {/* Filter */}
+          {/* <View style={{ flexDirection: "row", columnGap: 10 }}>
           <AppText>Filter</AppText>
         </View> */}
 
-        {/* Statistics */}
-        <View style={{ flexDirection: "row", columnGap: 10 }}>
-          <AppText>
-            IN - <AppText style={{ color: "green" }}>+₦10,000</AppText>
-          </AppText>
-          <AppText>
-            OUT - <AppText style={{ color: "red" }}>-₦9,670</AppText>
-          </AppText>
+          {/* Statistics */}
+          <View style={{ flexDirection: "row", columnGap: 10 }}>
+            <AppText>
+              IN - <AppText style={{ color: "green" }}>+₦10,000</AppText>
+            </AppText>
+            <AppText>
+              OUT - <AppText style={{ color: "red" }}>-₦9,670</AppText>
+            </AppText>
+          </View>
+          {/* History */}
+          <TransactionList
+            transactions={transactions.slice(0, 10)}
+            onPress={() => {}}
+          />
         </View>
-        {/* History */}
-        <TransactionList
-          transactions={transactions.slice(0, 10)}
-          onPress={() => {}}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </ThemedContainer>
   );
 }

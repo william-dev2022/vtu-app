@@ -1,8 +1,10 @@
 import { View, Text, Pressable } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Transaction } from "@/type";
 import { Image } from "expo-image";
 import AppText from "./AppText";
+import { ThemeContext } from "@/context/ThemeContext";
+import Colors from "@/constants/Colors";
 
 type Props = {
   transactions: Transaction[];
@@ -37,17 +39,22 @@ type TransactionListItemProps = {
   onPress: (transaction: Transaction) => void;
 };
 const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
+  const { currentTheme } = useContext(ThemeContext);
+
+  const isDark = currentTheme === "dark";
+  const colorScheme = isDark ? Colors.dark : Colors.light;
   return (
     <Pressable
       style={{
         flexDirection: "row",
         columnGap: 10,
         alignItems: "center",
-        borderColor: "#18181B",
+        borderColor: isDark ? "#18181B" : "#E4E4E7",
         paddingVertical: 10,
         paddingHorizontal: 5,
         borderRadius: 10,
-        borderWidth: 1,
+        // borderWidth: 1,
+        backgroundColor: colorScheme.secondary,
       }}
     >
       <View>

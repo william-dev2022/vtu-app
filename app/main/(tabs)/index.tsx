@@ -5,27 +5,38 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AppText from "@/components/AppText";
 import { CirclePlus, Eye } from "lucide-react-native";
 import { Image } from "expo-image";
 import RecentTransaction from "@/components/RecentTransaction";
+import ThemedContainer from "@/components/ThemedContainer";
+import { ThemeContext } from "@/context/ThemeContext";
+import Colors from "@/constants/Colors";
 
 export default function index() {
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Header />
-        <Services />
+    <ThemedContainer>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1, backgroundColor: "transparent" }}
+      >
+        <View style={styles.container}>
+          <Header />
+          <Services />
 
-        <RecentTransaction />
-      </View>
-    </ScrollView>
+          <RecentTransaction />
+        </View>
+      </ScrollView>
+    </ThemedContainer>
   );
 }
 
 const Header = () => {
+  const { currentTheme, toggleTheme } = useContext(ThemeContext);
+
+  const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
   return (
     <View>
       <View
@@ -98,7 +109,7 @@ const Header = () => {
             flexDirection: "row",
             alignItems: "center",
             columnGap: 4,
-            backgroundColor: "#230C33",
+            backgroundColor: colorScheme.secondary,
             paddingVertical: 10,
             paddingHorizontal: 10,
             borderRadius: 10,
@@ -114,18 +125,24 @@ const Header = () => {
 
 const Services = () => {
   const { height, width } = Dimensions.get("window");
+  const { currentTheme, toggleTheme } = useContext(ThemeContext);
+
+  const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
+
   const services = [
     {
       name: "Airtime",
-      icon: <Ionicons name="cellular-outline" size={16} color="white" />,
+      icon: (
+        <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
+      ),
     },
     {
       name: "Data",
-      icon: <Ionicons name="wifi-outline" size={16} color="white" />,
+      icon: <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />,
     },
     {
       name: "Electricity",
-      icon: <Ionicons name="bulb-outline" size={16} color="white" />,
+      icon: <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />,
     },
     {
       name: "More",
@@ -133,14 +150,14 @@ const Services = () => {
         <Ionicons
           name="ellipsis-vertical-circle-outline"
           size={16}
-          color="white"
+          color={colorScheme.icon}
         />
       ),
     },
   ];
   return (
     <View style={{ rowGap: 20 }}>
-      <AppText>Quick Links</AppText>
+      <AppText bold>Quick Links</AppText>
 
       <View>
         <View
@@ -156,7 +173,7 @@ const Services = () => {
               style={{
                 alignItems: "center",
                 columnGap: 5,
-                backgroundColor: "#09090B",
+                backgroundColor: colorScheme.secondary,
                 paddingVertical: 10,
                 paddingHorizontal: 10,
                 borderRadius: 10,
@@ -176,8 +193,8 @@ const Services = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingTop: 20,
-    rowGap: 40,
+    marginTop: 60,
+    rowGap: 30,
+    // backgroundColor: "red",
   },
 });

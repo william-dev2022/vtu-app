@@ -45,7 +45,7 @@ const transactions = [
 export default function RecentTransaction() {
   return (
     <View style={{ rowGap: 20 }}>
-      <AppText>Recent Transactions</AppText>
+      <AppText bold>Recent Transactions</AppText>
       <TransactionList transactions={transactions} onPress={(x) => {}} />
     </View>
   );

@@ -4,7 +4,7 @@ import { Appearance } from "react-native";
 
 type ThemeContextType = {
   currentTheme: string;
-  toggleTheme: (theme: string) => void;
+  toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({
