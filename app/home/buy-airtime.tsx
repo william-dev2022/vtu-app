@@ -6,18 +6,44 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
-import { previousTransactions } from "@/data/sample";
+import { previousTransactions as previousAirtimeTransactions } from "@/data/sample";
 import { Image } from "expo-image";
 import { iconMap } from "@/helpers/networkIcnMap";
 import { Contact } from "lucide-react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 
+const parseAmount = (value: string): number | null => {
+  const parsed = parseInt(value, 10); // specify radix 10 for clarity
+  return isNaN(parsed) ? null : parsed;
+};
+
 export default function BuyAirtime() {
   const { width } = Dimensions.get("window");
   const { colorScheme } = useContext(ThemeContext);
+
+  const [amount, setAmount] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handleAmountChange = (amount: string) => {
+    const parsedAmount = parseAmount(amount);
+
+    if (parsedAmount != null) {
+      setAmount(amount);
+    } else {
+      setAmount("");
+    }
+  };
+
+  const handlePhoneNumberChange = (phoneNumber: string) => {
+    if (phoneNumber.length > 11) {
+      return;
+    }
+
+    setPhoneNumber(phoneNumber);
+  };
 
   return (
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
@@ -28,8 +54,9 @@ export default function BuyAirtime() {
           horizontal
           style={{ paddingTop: 20 }}
         >
-          {previousTransactions.map((transaction) => (
-            <View
+          {previousAirtimeTransactions.map((transaction) => (
+            <Pressable
+              onPress={() => handlePhoneNumberChange(transaction.number)}
               key={transaction.id}
               style={{
                 alignItems: "center",
@@ -42,7 +69,7 @@ export default function BuyAirtime() {
                 style={{ width: 30, height: 30, borderRadius: 10 }}
               />
               <AppText style={{ fontSize: 12 }}>{transaction.number}</AppText>
-            </View>
+            </Pressable>
           ))}
         </ScrollView>
       </View>
@@ -68,8 +95,6 @@ export default function BuyAirtime() {
             borderBottomWidth: 0.3,
             borderColor: "#e4e4e7",
             marginTop: 20,
-            // backgroundColor: "red",
-            // paddingBottom: 5,
           }}
         >
           <Image
@@ -83,9 +108,9 @@ export default function BuyAirtime() {
               minHeight: 40,
               color: "rgb(190, 187, 187)",
               fontSize: 18,
-              //   borderBottomWidth: 1,
-              //   paddingBottom: 0,
             }}
+            value={phoneNumber}
+            onChangeText={handlePhoneNumberChange}
             placeholderTextColor="rgb(105, 104, 104)"
             placeholder="09375436636"
             keyboardType="phone-pad"
@@ -112,13 +137,14 @@ export default function BuyAirtime() {
           >
             {[100, 200, 300, 400, 500, 1000, 1500, 2000].map((item) => (
               <TouchableOpacity
+                onPress={() => handleAmountChange(item.toString())}
                 key={item}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   width: width * 0.2,
                   padding: 10,
-                  backgroundColor: "#09090b",
+                  backgroundColor: colorScheme.background,
                   borderRadius: 10,
                   justifyContent: "center",
                 }}
@@ -137,19 +163,20 @@ export default function BuyAirtime() {
               alignItems: "center",
               borderBottomWidth: 0.3,
               borderColor: "rgb(105, 104, 104)",
-              paddingBottom: 10,
             }}
           >
-            <AppText style={{ fontSize: 16 }}>₦</AppText>
+            <AppText style={{ fontSize: 18 }}>₦</AppText>
             <TextInput
               style={{
                 flex: 1,
                 minHeight: 40,
                 color: "rgb(190, 187, 187)",
                 fontSize: 18,
-                //   borderBottomWidth: 1,
-                //   paddingBottom: 0,
+                fontFamily: "Krub_400Regular",
+                marginBottom: 0,
               }}
+              onChangeText={handleAmountChange}
+              value={amount}
               placeholderTextColor="rgb(105, 104, 104)"
               placeholder="50-50000"
               keyboardType="phone-pad"
