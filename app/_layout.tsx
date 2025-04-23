@@ -61,9 +61,13 @@ function RootLayoutNav() {
   return (
     <ThemeProvider>
       {/* <ThemedContainer> */}
-      <Stack initialRouteName="main/(tabs)">
+      <Stack initialRouteName="(tabs)">
         <Stack.Screen
-          name="main/(tabs)"
+          name="(tabs)"
+          options={{ headerShown: false, navigationBarHidden: true }}
+        />
+        <Stack.Screen
+          name="home"
           options={{ headerShown: false, navigationBarHidden: true }}
         />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />

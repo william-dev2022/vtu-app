@@ -19,16 +19,14 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { currentTheme } = useContext(ThemeContext);
+  const { currentTheme, colorScheme } = useContext(ThemeContext);
 
-  const isDark = currentTheme === "dark";
-
-  const colorScheme = isDark ? Colors.dark : Colors.light;
+  // const isDark = currentTheme === "dark";
 
   return (
     <View style={[{ backgroundColor: colorScheme.background, flex: 1 }]}>
       <Tabs
-        initialRouteName="profile"
+        initialRouteName="index"
         screenOptions={{
           tabBarActiveTintColor: colorScheme.tabBarActiveTintColor,
           headerShown: useClientOnlyValue(false, true),

@@ -14,6 +14,7 @@ import RecentTransaction from "@/components/RecentTransaction";
 import ThemedContainer from "@/components/ThemedContainer";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
+import { useRouter } from "expo-router";
 
 export default function index() {
   return (
@@ -126,6 +127,7 @@ const Header = () => {
 const Services = () => {
   const { height, width } = Dimensions.get("window");
   const { currentTheme, toggleTheme } = useContext(ThemeContext);
+  const router = useRouter();
 
   const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
 
@@ -170,6 +172,7 @@ const Services = () => {
           {services.map((service, index) => (
             <Pressable
               key={index}
+              onPress={() => router.push("/home/buy-airtime")}
               style={{
                 alignItems: "center",
                 columnGap: 5,

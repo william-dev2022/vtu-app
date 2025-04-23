@@ -5,19 +5,11 @@ import { Image } from "expo-image";
 import AppText from "./AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
+import { iconMap } from "@/helpers/networkIcnMap";
 
 type Props = {
   transactions: Transaction[];
   onPress: (transaction: Transaction) => void;
-};
-
-const iconMap: Record<string, any> = {
-  airtel: require("@/assets/images/services-logo/airtel.jpg"),
-  fund: require("@/assets/images/services-logo/fund.png"),
-  mtn: require("@/assets/images/services-logo/mtn.jpg"),
-  electricity: require("@/assets/images/services-logo/electricity.jpeg"),
-  glo: require("@/assets/images/services-logo/glo.jpeg"),
-  nineMobile: require("@/assets/images/services-logo/9mobile.jpg"),
 };
 
 export default function TransactionList({ onPress, transactions }: Props) {

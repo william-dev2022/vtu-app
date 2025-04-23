@@ -150,3 +150,16 @@ export const transactions = [
     icon: "mtn",
   },
 ];
+
+export const previousTransactions = [
+  { id: 1, network: "mtn", number: "08133654736" },
+  { id: 2, network: "airtel", number: "08021234567" },
+  { id: 3, network: "glo", number: "07051234567" },
+  { id: 4, network: "nineMobile", number: "09081234567" },
+  { id: 5, network: "mtn", number: "08124567890" },
+  { id: 6, network: "airtel", number: "08037894567" },
+  { id: 7, network: "glo", number: "07039876543" },
+  { id: 8, network: "nineMobile", number: "09027654321" },
+  { id: 9, network: "mtn", number: "08135678901" },
+  { id: 10, network: "airtel", number: "08023456789" },
+];
