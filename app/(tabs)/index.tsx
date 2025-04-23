@@ -134,12 +134,14 @@ const Services = () => {
   const services = [
     {
       name: "Airtime",
+      link: "/home/buy-airtime",
       icon: (
         <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
       ),
     },
     {
       name: "Data",
+      link: "/home/data",
       icon: <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />,
     },
     {
@@ -148,6 +150,7 @@ const Services = () => {
     },
     {
       name: "More",
+      link: "/home/buy-airtime",
       icon: (
         <Ionicons
           name="ellipsis-vertical-circle-outline"
@@ -172,7 +175,7 @@ const Services = () => {
           {services.map((service, index) => (
             <Pressable
               key={index}
-              onPress={() => router.push("/home/buy-airtime")}
+              onPress={() => router.push("/home/buy-data")}
               style={{
                 alignItems: "center",
                 columnGap: 5,
