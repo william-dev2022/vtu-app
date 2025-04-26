@@ -144,7 +144,7 @@ const Services = () => {
     },
     {
       name: "Data",
-      link: "/home/data",
+      link: "/home/buy-data",
       icon: <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />,
     },
     {
@@ -178,7 +178,7 @@ const Services = () => {
           {services.map((service, index) => (
             <Pressable
               key={index}
-              onPress={() => router.push("/home/buy-data")}
+              onPress={() => router.push(service.link as any)}
               style={{
                 alignItems: "center",
                 columnGap: 5,

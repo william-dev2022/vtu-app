@@ -1,136 +1,74 @@
-import { View, Text } from "react-native";
+import { Pressable } from "react-native";
 import React, { useContext } from "react";
-import { Link, Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { ThemeContext } from "@/context/ThemeContext";
 import AppText from "@/components/AppText";
 import { ChevronLeft } from "lucide-react-native";
 
 export default function _layout() {
   const { colorScheme } = useContext(ThemeContext);
+  const router = useRouter();
+
+  // Reusable headerLeft component
+  const HeaderLeft = () => (
+    <Pressable onPress={() => router.back()} style={{ marginRight: 15 }}>
+      <ChevronLeft color={colorScheme.text} />
+    </Pressable>
+  );
+
+  // Reusable headerRight component
+  const HeaderRight = () => (
+    <Pressable onPress={() => router.push("/transactions")}>
+      <AppText
+        bold
+        style={{
+          color: "#0f766e",
+          borderStyle: "dashed",
+          borderBottomWidth: 1,
+          borderBottomColor: "#0f766e",
+        }}
+      >
+        History
+      </AppText>
+    </Pressable>
+  );
+
+  // Reusable options
+  const screenOptions = (title: string, showRight = true) => ({
+    headerShown: true,
+    navigationBarHidden: true,
+    title,
+    headerBackVisible: false,
+    headerStyle: {
+      backgroundColor: colorScheme.background,
+    },
+    headerShadowVisible: false,
+    headerTintColor: colorScheme.text,
+    headerTitleStyle: {
+      color: colorScheme.text,
+      fontFamily: "Krub_400Regular",
+      fontSize: 18,
+    },
+    headerLeft: () => <HeaderLeft />,
+    headerRight: showRight ? () => <HeaderRight /> : undefined,
+    headerTitleAlign: "left" as const,
+  });
+
   return (
     <Stack>
+      <Stack.Screen name="buy-airtime" options={screenOptions("Buy Airtime")} />
+      <Stack.Screen name="buy-data" options={screenOptions("Buy Data")} />
       <Stack.Screen
-        name="buy-airtime"
+        name="profile-details"
         options={{
-          headerShown: true,
-          navigationBarHidden: true,
-          title: "Buy Airtime",
-          headerBackVisible: false,
-          headerStyle: {
-            // backgroundColor: "#2C2C2C",
-            backgroundColor: colorScheme.secondary,
-            // backgroundColor: colorScheme.background,
-          },
-          headerShadowVisible: false,
-          headerTintColor: colorScheme.text, // 🔥 this changes back button color
-          headerTitleStyle: {
-            color: colorScheme.text,
-            fontFamily: "Krub_400Regular",
-
-            fontSize: 18,
-          },
-          headerLeft(props) {
-            return (
-              <Link href="/(tabs)" style={{ marginRight: 15 }}>
-                <ChevronLeft color={colorScheme.text} />
-              </Link>
-            );
-          },
-          // Removed headerLeftContainerStyle as it is not a valid property
-          headerTitleAlign: "left",
-          headerRight: () => {
-            return (
-              <Link href="/transactions">
-                <AppText
-                  bold
-                  style={{
-                    color: "#0f766e",
-                    borderStyle: "dashed",
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#0f766e",
-                  }}
-                >
-                  Histoy
-                </AppText>
-              </Link>
-            );
-          },
+          ...screenOptions("Account Details", false),
+          title: "",
         }}
-      />
-      <Stack.Screen
-        name="buy-data"
-        options={{
-          headerShown: true,
-          navigationBarHidden: true,
-          title: "Buy Data",
-          headerBackVisible: false,
-          headerStyle: {
-            // backgroundColor: "#2C2C2C",
-            backgroundColor: colorScheme.secondary,
-            // backgroundColor: colorScheme.background,
-          },
-          headerShadowVisible: false,
-          headerTintColor: colorScheme.text, // 🔥 this changes back button color
-          headerTitleStyle: {
-            color: colorScheme.text,
-            fontFamily: "Krub_400Regular",
-            fontSize: 18,
-          },
-          headerLeft(props) {
-            return (
-              <Link href="/(tabs)" style={{ marginRight: 15 }}>
-                <ChevronLeft color={colorScheme.text} />
-              </Link>
-            );
-          },
-          // Removed headerLeftContainerStyle as it is not a valid property
-          headerTitleAlign: "left",
-          headerRight: () => {
-            return (
-              <Link href="/transactions">
-                <AppText
-                  bold
-                  style={{
-                    color: "#0f766e",
-                    borderStyle: "dashed",
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#fff",
-                  }}
-                >
-                  Histoy
-                </AppText>
-              </Link>
-            );
-          },
-        }}
+        // options={screenOptions("Account Details", false)}
       />
       <Stack.Screen
         name="fund-wallet"
-        options={{
-          headerShown: true,
-          navigationBarHidden: true,
-          title: "Fund Wallet",
-          headerBackVisible: false,
-          headerStyle: {
-            backgroundColor: colorScheme.secondary,
-          },
-          headerShadowVisible: false,
-          headerTintColor: colorScheme.text, // 🔥 this changes back button color
-          headerTitleStyle: {
-            color: colorScheme.text,
-            fontFamily: "Krub_400Regular",
-            fontSize: 18,
-          },
-          headerLeft(props) {
-            return (
-              <Link href="/(tabs)" style={{ marginRight: 15 }}>
-                <ChevronLeft color={colorScheme.text} />
-              </Link>
-            );
-          },
-          // Removed headerLeftContainerStyle as it is not a valid property
-          headerTitleAlign: "left",
-        }}
+        options={screenOptions("Fund Wallet", false)}
       />
     </Stack>
   );

@@ -5,8 +5,10 @@ import AppText from "@/components/AppText";
 import SettingThemeToggle from "@/components/SettingThemeToggle";
 import SettingsItemList from "@/components/SettingItemList";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function profile() {
+  const router = useRouter();
   return (
     <ThemedContainer style={{ paddingTop: 60 }}>
       <View
@@ -53,7 +55,7 @@ export default function profile() {
       <View style={{ marginTop: 10, marginBottom: 20 }}>
         <SettingsItemList
           title={"Account Details"}
-          onPress={() => {}}
+          onPress={() => router.push("/home/profile-details")}
           iconText="account-details-outline"
         />
         <SettingsItemList
