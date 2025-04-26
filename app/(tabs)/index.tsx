@@ -9,14 +9,14 @@ import React, { useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AppText from "@/components/AppText";
 import { CirclePlus, Eye } from "lucide-react-native";
-import { Image } from "expo-image";
 import RecentTransaction from "@/components/RecentTransaction";
 import ThemedContainer from "@/components/ThemedContainer";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
 import { useRouter } from "expo-router";
+import Services from "@/components/Services";
 
-export default function index() {
+export default function Index() {
   return (
     <ThemedContainer>
       <ScrollView
@@ -35,9 +35,7 @@ export default function index() {
 }
 
 const Header = () => {
-  const { currentTheme, toggleTheme } = useContext(ThemeContext);
-
-  const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
+  const { colorScheme } = useContext(ThemeContext);
 
   const router = useRouter();
   return (
@@ -122,78 +120,6 @@ const Header = () => {
           <CirclePlus size={16} color="white" />
           <AppText>Fund Wallet</AppText>
         </Pressable>
-      </View>
-    </View>
-  );
-};
-
-const Services = () => {
-  const { height, width } = Dimensions.get("window");
-  const { currentTheme, toggleTheme } = useContext(ThemeContext);
-  const router = useRouter();
-
-  const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
-
-  const services = [
-    {
-      name: "Airtime",
-      link: "/home/buy-airtime",
-      icon: (
-        <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
-      ),
-    },
-    {
-      name: "Data",
-      link: "/home/buy-data",
-      icon: <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />,
-    },
-    {
-      name: "Electricity",
-      icon: <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />,
-    },
-    {
-      name: "More",
-      link: "/home/buy-airtime",
-      icon: (
-        <Ionicons
-          name="ellipsis-vertical-circle-outline"
-          size={16}
-          color={colorScheme.icon}
-        />
-      ),
-    },
-  ];
-  return (
-    <View style={{ rowGap: 20 }}>
-      <AppText bold>Quick Links</AppText>
-
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            columnGap: 10,
-            justifyContent: "space-between",
-          }}
-        >
-          {services.map((service, index) => (
-            <Pressable
-              key={index}
-              onPress={() => router.push(service.link as any)}
-              style={{
-                alignItems: "center",
-                columnGap: 5,
-                backgroundColor: colorScheme.secondary,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-                borderRadius: 10,
-                minWidth: width / 5,
-              }}
-            >
-              {service.icon}
-              <AppText>{service.name}</AppText>
-            </Pressable>
-          ))}
-        </View>
       </View>
     </View>
   );
