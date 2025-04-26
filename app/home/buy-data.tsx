@@ -29,6 +29,8 @@ export default function BuyData() {
 
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [currentPlanMenu, setCurrentPlanMenu] =
+    useState<keyof typeof groupedPlans>("daily");
 
   const handleAmountChange = (amount: string) => {
     const parsedAmount = parseAmount(amount);
@@ -71,7 +73,15 @@ export default function BuyData() {
                 contentFit="cover"
                 style={{ width: 30, height: 30, borderRadius: 10 }}
               />
-              <AppText style={{ fontSize: 12 }}>{transaction.number}</AppText>
+              <AppText
+                style={{
+                  fontSize: 12,
+                  fontFamily: "Poppins_400Regular",
+                  marginTop: 4,
+                }}
+              >
+                {transaction.number}
+              </AppText>
             </Pressable>
           ))}
         </ScrollView>
@@ -111,6 +121,7 @@ export default function BuyData() {
               minHeight: 40,
               color: "rgb(190, 187, 187)",
               fontSize: 18,
+              fontFamily: "Krub_400Regular",
             }}
             value={phoneNumber}
             onChangeText={handlePhoneNumberChange}
@@ -137,6 +148,9 @@ export default function BuyData() {
           >
             {Object.keys(groupedPlans).map((key, index) => (
               <Pressable
+                onPress={() =>
+                  setCurrentPlanMenu(key as keyof typeof groupedPlans)
+                }
                 style={{
                   //   paddingHorizontal: 5,
                   borderBottomWidth: index == 0 ? 3 : 0,
@@ -146,7 +160,12 @@ export default function BuyData() {
                 }}
                 key={key}
               >
-                <AppText style={{ textTransform: "capitalize" }}>
+                <AppText
+                  style={{
+                    textTransform: "capitalize",
+                    // fontFamily: "Poppins_400Regular",
+                  }}
+                >
                   {key.toString()}
                 </AppText>
               </Pressable>
@@ -157,68 +176,33 @@ export default function BuyData() {
               flexDirection: "row",
               alignItems: "center",
               flexWrap: "wrap",
-              justifyContent: "space-between",
+              // justifyContent: "space-evenly",
+              columnGap: 4,
+              // columnGap: 15,
               rowGap: 10,
               marginTop: 10,
             }}
           >
-            {[100, 200, 300, 400, 500, 1000, 1500, 2000].map((item) => (
+            {groupedPlans[currentPlanMenu].map((plan, index) => (
               <TouchableOpacity
-                onPress={() => handleAmountChange(item.toString())}
-                key={item}
+                // onPress={() => handleAmountChange(item.toString())}
+                key={index}
                 style={{
-                  flexDirection: "row",
                   alignItems: "center",
+                  // width: width * 0.25,
                   width: width * 0.2,
                   padding: 10,
                   backgroundColor: colorScheme.background,
                   borderRadius: 10,
                   justifyContent: "center",
+                  rowGap: 5,
                 }}
               >
-                <AppText style={{ fontSize: 16 }} key={item}>
-                  ₦{item}
-                </AppText>
+                <AppText style={{ fontSize: 16 }}>{plan.data}</AppText>
+                <AppText style={{ fontSize: 12 }}>{plan.duration}</AppText>
+                <AppText style={{ fontSize: 12 }}>₦{plan.price}</AppText>
               </TouchableOpacity>
             ))}
-          </View>
-
-          <View
-            style={{
-              marginTop: 20,
-              flexDirection: "row",
-              alignItems: "center",
-              borderBottomWidth: 0.3,
-              borderColor: "rgb(105, 104, 104)",
-            }}
-          >
-            <AppText style={{ fontSize: 18 }}>₦</AppText>
-            <TextInput
-              style={{
-                flex: 1,
-                minHeight: 40,
-                color: "rgb(190, 187, 187)",
-                fontSize: 18,
-                fontFamily: "Krub_400Regular",
-                marginBottom: 0,
-              }}
-              onChangeText={handleAmountChange}
-              value={amount}
-              placeholderTextColor="rgb(105, 104, 104)"
-              placeholder="50-50000"
-              keyboardType="phone-pad"
-            />
-
-            <Pressable
-              style={{
-                paddingHorizontal: 15,
-                paddingVertical: 5,
-                borderRadius: 40,
-                backgroundColor: "#065f46",
-              }}
-            >
-              <AppText>Pay</AppText>
-            </Pressable>
           </View>
         </View>
       </View>

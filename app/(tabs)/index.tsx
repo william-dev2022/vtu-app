@@ -38,6 +38,8 @@ const Header = () => {
   const { currentTheme, toggleTheme } = useContext(ThemeContext);
 
   const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
+
+  const router = useRouter();
   return (
     <View>
       <View
@@ -105,6 +107,7 @@ const Header = () => {
         </View>
 
         <Pressable
+          onPress={() => router.push("/home/fund-wallet")}
           style={{
             marginTop: 20,
             flexDirection: "row",

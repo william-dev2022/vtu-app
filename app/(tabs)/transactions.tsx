@@ -28,7 +28,7 @@ export default function TransactionsTab() {
                 columnGap: 5,
               }}
             >
-              <Ionicons name="download-outline" size={18} color="blue" />
+              <Ionicons name="download-outline" size={18} color="#0f766e" />
               <AppText style={{ fontSize: 12 }}>Download</AppText>
             </View>
           </View>
@@ -41,7 +41,7 @@ export default function TransactionsTab() {
           {/* Statistics */}
           <View style={{ flexDirection: "row", columnGap: 10 }}>
             <AppText>
-              IN - <AppText style={{ color: "green" }}>+₦10,000</AppText>
+              IN - <AppText style={{ color: "#0f766e" }}>+₦10,000</AppText>
             </AppText>
             <AppText>
               OUT - <AppText style={{ color: "red" }}>-₦9,670</AppText>

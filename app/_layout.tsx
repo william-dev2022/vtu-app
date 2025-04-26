@@ -15,6 +15,10 @@ import {
   Krub_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/krub";
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+} from "@expo-google-fonts/poppins";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ThemedContainer from "@/components/ThemedContainer";
 
@@ -35,6 +39,8 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     Krub_400Regular,
     Krub_600SemiBold,
+    Poppins_400Regular,
+    Poppins_600SemiBold,
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.

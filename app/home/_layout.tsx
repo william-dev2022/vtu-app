@@ -74,7 +74,6 @@ export default function _layout() {
           headerTitleStyle: {
             color: colorScheme.text,
             fontFamily: "Krub_400Regular",
-
             fontSize: 18,
           },
           headerLeft(props) {
@@ -95,7 +94,7 @@ export default function _layout() {
                     color: "#0f766e",
                     borderStyle: "dashed",
                     borderBottomWidth: 1,
-                    borderBottomColor: "#0f766e",
+                    borderBottomColor: "#fff",
                   }}
                 >
                   Histoy
@@ -103,6 +102,34 @@ export default function _layout() {
               </Link>
             );
           },
+        }}
+      />
+      <Stack.Screen
+        name="fund-wallet"
+        options={{
+          headerShown: true,
+          navigationBarHidden: true,
+          title: "Fund Wallet",
+          headerBackVisible: false,
+          headerStyle: {
+            backgroundColor: colorScheme.secondary,
+          },
+          headerShadowVisible: false,
+          headerTintColor: colorScheme.text, // 🔥 this changes back button color
+          headerTitleStyle: {
+            color: colorScheme.text,
+            fontFamily: "Krub_400Regular",
+            fontSize: 18,
+          },
+          headerLeft(props) {
+            return (
+              <Link href="/(tabs)" style={{ marginRight: 15 }}>
+                <ChevronLeft color={colorScheme.text} />
+              </Link>
+            );
+          },
+          // Removed headerLeftContainerStyle as it is not a valid property
+          headerTitleAlign: "left",
         }}
       />
     </Stack>
