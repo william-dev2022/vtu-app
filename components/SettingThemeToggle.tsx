@@ -1,8 +1,19 @@
-import { View, Text, Switch } from "react-native";
+import { View, Switch, StyleSheet } from "react-native";
 import React, { useContext } from "react";
 import AppText from "./AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    minHeight: 45,
+  },
+});
 
 export default function SettingThemeToggle() {
   const { currentTheme, toggleTheme } = useContext(ThemeContext);
@@ -14,14 +25,7 @@ export default function SettingThemeToggle() {
   return (
     <View>
       <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          backgroundColor: colorScheme.secondary,
-          paddingHorizontal: 10,
-          borderRadius: 10,
-        }}
+        style={[styles.container, { backgroundColor: colorScheme.secondary }]}
       >
         <AppText>Dark mode</AppText>
 

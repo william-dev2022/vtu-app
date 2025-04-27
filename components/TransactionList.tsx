@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import React, { useContext } from "react";
 import { Transaction } from "@/type";
 import { Image } from "expo-image";
@@ -30,6 +30,18 @@ type TransactionListItemProps = {
   transaction: Transaction;
   onPress: (transaction: Transaction) => void;
 };
+
+const styles = StyleSheet.create({
+  listItem: {
+    flexDirection: "row",
+    columnGap: 10,
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    borderRadius: 10,
+  },
+});
+
 const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
   const { currentTheme } = useContext(ThemeContext);
 
@@ -37,17 +49,7 @@ const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
   const colorScheme = isDark ? Colors.dark : Colors.light;
   return (
     <Pressable
-      style={{
-        flexDirection: "row",
-        columnGap: 10,
-        alignItems: "center",
-        borderColor: isDark ? "#18181B" : "#E4E4E7",
-        paddingVertical: 10,
-        paddingHorizontal: 5,
-        borderRadius: 10,
-        // borderWidth: 1,
-        backgroundColor: colorScheme.secondary,
-      }}
+      style={[styles.listItem, { backgroundColor: colorScheme.secondary }]}
     >
       <View>
         <Image

@@ -1,14 +1,31 @@
 import { ThemeContext } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import AppText from "./AppText";
 import { ServiceButton } from "./ServiceButton";
+
+type Service = {
+  name: string;
+  link?: string;
+  icon: JSX.Element;
+};
+
+const styles = StyleSheet.create({
+  container: {
+    rowGap: 20,
+  },
+  serviceRow: {
+    flexDirection: "row",
+    columnGap: 10,
+    justifyContent: "space-between",
+  },
+});
 
 const Services = () => {
   const { colorScheme } = useContext(ThemeContext);
 
-  const services = [
+  const services: Service[] = [
     {
       name: "Airtime",
       link: "/home/buy-airtime",
@@ -23,6 +40,7 @@ const Services = () => {
     },
     {
       name: "Electricity",
+      link: "/home/buy-electricity",
       icon: <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />,
     },
     {
@@ -38,16 +56,10 @@ const Services = () => {
     },
   ];
   return (
-    <View style={{ rowGap: 20 }}>
+    <View style={styles.container}>
       <AppText bold>Quick Links</AppText>
 
-      <View
-        style={{
-          flexDirection: "row",
-          columnGap: 10,
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.serviceRow}>
         {services.map((service, index) => (
           <ServiceButton
             key={index}

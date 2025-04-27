@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import AppText from "@/components/AppText";
 import ThemedContainer from "@/components/ThemedContainer";
+import DetailRow from "@/components/DetailRow";
 
 export default function ProfileDetails() {
   const { colorScheme } = useContext(ThemeContext);
@@ -22,13 +23,15 @@ export default function ProfileDetails() {
       <ScrollView
         contentContainerStyle={{
           padding: 20,
-          // backgroundColor: colorScheme.background,
           flexGrow: 1,
         }}
+        accessibilityLabel="Profile details screen"
       >
         <AppText
           bold
           style={{ fontSize: 24, marginBottom: 20, color: colorScheme.text }}
+          accessibilityRole="header"
+          accessibilityLabel="Profile Details Header"
         >
           Profile Details
         </AppText>
@@ -45,6 +48,8 @@ export default function ProfileDetails() {
           <AppText
             bold
             style={{ fontSize: 18, marginBottom: 10, color: colorScheme.text }}
+            accessibilityRole="header"
+            accessibilityLabel="Wallet Information Header"
           >
             Wallet
           </AppText>
@@ -65,9 +70,11 @@ export default function ProfileDetails() {
             alignItems: "center",
           }}
           onPress={() => {
-            // later navigate to edit profile screen
             console.log("Edit Profile Pressed");
           }}
+          accessibilityRole="button"
+          accessibilityLabel="Edit Profile Button"
+          accessibilityHint="Navigates to the edit profile screen"
         >
           <AppText bold style={{ color: "#fff", fontSize: 16 }}>
             Edit Profile
@@ -75,21 +82,5 @@ export default function ProfileDetails() {
         </Pressable>
       </ScrollView>
     </ThemedContainer>
-  );
-}
-
-// Reusable component for each row
-function DetailRow({ label, value }: { label: string; value: string }) {
-  const { colorScheme } = useContext(ThemeContext);
-
-  return (
-    <View style={{ marginBottom: 15 }}>
-      <AppText style={{ color: "#6b7280", fontSize: 14, marginBottom: 3 }}>
-        {label}
-      </AppText>
-      <AppText bold style={{ fontSize: 16, color: colorScheme.text }}>
-        {value}
-      </AppText>
-    </View>
   );
 }

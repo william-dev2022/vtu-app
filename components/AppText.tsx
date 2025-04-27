@@ -8,9 +8,21 @@ interface CustomTextProps extends TextProps {
   bold?: boolean;
 }
 
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+  },
+  regularText: {
+    fontFamily: "Krub_400Regular",
+  },
+  boldText: {
+    fontFamily: "Krub_600SemiBold",
+  },
+});
+
 // Create the custom Text component
 const AppText: React.FC<CustomTextProps> = ({ style, bold, ...props }) => {
-  const { currentTheme, toggleTheme } = useContext(ThemeContext);
+  const { currentTheme } = useContext(ThemeContext);
 
   const isDarkMode = currentTheme === "dark";
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
@@ -27,17 +39,5 @@ const AppText: React.FC<CustomTextProps> = ({ style, bold, ...props }) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 16,
-  },
-  regularText: {
-    fontFamily: "Krub_400Regular",
-  },
-  boldText: {
-    fontFamily: "Krub_600SemiBold",
-  },
-});
 
 export default AppText;
