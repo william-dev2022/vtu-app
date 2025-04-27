@@ -1,3 +1,4 @@
+// Import necessary components and libraries
 import {
   View,
   ScrollView,
@@ -18,20 +19,25 @@ import { iconMap } from "@/helpers/networkIcnMap";
 import { Contact } from "lucide-react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 
+// Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
   const parsed = parseInt(value, 10); // specify radix 10 for clarity
   return isNaN(parsed) ? null : parsed;
 };
 
 export default function BuyData() {
+  // Get screen dimensions
   const { width } = Dimensions.get("window");
+  // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
 
+  // State variables for user input and selected plan menu
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [currentPlanMenu, setCurrentPlanMenu] =
     useState<keyof typeof groupedPlans>("daily");
 
+  // Handle changes to the amount input
   const handleAmountChange = (amount: string) => {
     const parsedAmount = parseAmount(amount);
 
@@ -42,6 +48,7 @@ export default function BuyData() {
     }
   };
 
+  // Handle changes to the phone number input
   const handlePhoneNumberChange = (phoneNumber: string) => {
     if (phoneNumber.length > 11) {
       return;
@@ -51,9 +58,10 @@ export default function BuyData() {
   };
 
   return (
+    // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
+      {/* Section for displaying previous transactions */}
       <View style={{ backgroundColor: colorScheme.secondary }}>
-        {/* <View style={{ backgroundColor: "rgb(44, 44, 44)" }}> */}
         <ScrollView
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -68,11 +76,13 @@ export default function BuyData() {
                 padding: 10,
               }}
             >
+              {/* Display network icon */}
               <Image
                 source={iconMap[transaction.network]}
                 contentFit="cover"
                 style={{ width: 30, height: 30, borderRadius: 10 }}
               />
+              {/* Display transaction number */}
               <AppText
                 style={{
                   fontSize: 12,
@@ -87,6 +97,7 @@ export default function BuyData() {
         </ScrollView>
       </View>
 
+      {/* Section for user input and data plans */}
       <View
         style={{
           padding: 20,
@@ -97,6 +108,7 @@ export default function BuyData() {
           marginHorizontal: 10,
         }}
       >
+        {/* Display user balance */}
         <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
           Balance: ₦535
         </AppText>
@@ -110,11 +122,13 @@ export default function BuyData() {
             marginTop: 20,
           }}
         >
+          {/* Display selected network icon */}
           <Image
             source={iconMap["mtn"]}
             contentFit="cover"
             style={{ width: 25, height: 25, borderRadius: 10 }}
           />
+          {/* Input field for phone number */}
           <TextInput
             style={{
               flex: 1,
@@ -130,6 +144,7 @@ export default function BuyData() {
             keyboardType="phone-pad"
           />
 
+          {/* Button to open contact list */}
           <Pressable>
             <Contact color="white" size={20} />
           </Pressable>
@@ -137,8 +152,6 @@ export default function BuyData() {
 
         {/* Data Plans */}
         <View style={{ marginTop: 30 }}>
-          {/* <AppText>Top up Airtime</AppText> */}
-
           <View
             style={{
               justifyContent: "space-between",
@@ -146,13 +159,13 @@ export default function BuyData() {
               marginBottom: 20,
             }}
           >
+            {/* Tabs for selecting data plan categories */}
             {Object.keys(groupedPlans).map((key, index) => (
               <Pressable
                 onPress={() =>
                   setCurrentPlanMenu(key as keyof typeof groupedPlans)
                 }
                 style={{
-                  //   paddingHorizontal: 5,
                   borderBottomWidth: index == 0 ? 3 : 0,
                   borderColor: "#0f766e",
                   borderBottomRightRadius: 5,
@@ -163,7 +176,6 @@ export default function BuyData() {
                 <AppText
                   style={{
                     textTransform: "capitalize",
-                    // fontFamily: "Poppins_400Regular",
                   }}
                 >
                   {key.toString()}
@@ -176,20 +188,17 @@ export default function BuyData() {
               flexDirection: "row",
               alignItems: "center",
               flexWrap: "wrap",
-              // justifyContent: "space-evenly",
               columnGap: 4,
-              // columnGap: 15,
               rowGap: 10,
               marginTop: 10,
             }}
           >
+            {/* Display available data plans */}
             {groupedPlans[currentPlanMenu].map((plan, index) => (
               <TouchableOpacity
-                // onPress={() => handleAmountChange(item.toString())}
                 key={index}
                 style={{
                   alignItems: "center",
-                  // width: width * 0.25,
                   width: width * 0.2,
                   padding: 10,
                   backgroundColor: colorScheme.background,

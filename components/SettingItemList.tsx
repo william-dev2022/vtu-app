@@ -1,21 +1,26 @@
-import { View, Text, Switch, Pressable, TouchableOpacity } from "react-native";
+// Import necessary components and libraries
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
 import AppText from "./AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+// Define the props for the SettingsItemList component
 type Props = {
-  title: string;
-  onPress: () => void;
-  iconText?: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  title: string; // Title of the setting item
+  onPress: () => void; // Callback when the item is pressed
+  iconText?: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; // Icon name for the setting item
 };
+
 export default function SettingsItemList({ iconText, title, onPress }: Props) {
+  // Access theme context for color scheme
   const { currentTheme } = useContext(ThemeContext);
 
   const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
 
   return (
+    // Touchable item for each setting
     <TouchableOpacity
       onPress={onPress}
       style={{
@@ -29,12 +34,15 @@ export default function SettingsItemList({ iconText, title, onPress }: Props) {
         marginBottom: 5,
       }}
     >
+      {/* Display icon and title */}
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <MaterialCommunityIcons
-          name={iconText}
-          size={16}
-          color={colorScheme.icon}
-        />
+        {iconText && (
+          <MaterialCommunityIcons
+            name={iconText}
+            size={16}
+            color={colorScheme.icon}
+          />
+        )}
         <AppText>{title}</AppText>
       </View>
     </TouchableOpacity>

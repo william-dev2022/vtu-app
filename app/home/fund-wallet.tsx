@@ -1,3 +1,4 @@
+// Import necessary components and libraries
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useContext } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
@@ -5,8 +6,11 @@ import AppText from "@/components/AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 
 export default function FundWallet() {
+  // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
+
   return (
+    // Themed container for consistent styling
     <ThemedContainer>
       <View
         style={{
@@ -19,6 +23,7 @@ export default function FundWallet() {
           rowGap: 20,
         }}
       >
+        {/* Display bank name */}
         <View
           style={{
             justifyContent: "center",
@@ -32,6 +37,8 @@ export default function FundWallet() {
             Union Bank
           </AppText>
         </View>
+
+        {/* Display account number */}
         <View
           style={{
             justifyContent: "center",
@@ -45,6 +52,8 @@ export default function FundWallet() {
             9087364537
           </AppText>
         </View>
+
+        {/* Display account name */}
         <View
           style={{
             justifyContent: "center",
@@ -59,6 +68,7 @@ export default function FundWallet() {
           </AppText>
         </View>
 
+        {/* Buttons for copying and sharing account details */}
         <View style={{ flexDirection: "row", columnGap: 10 }}>
           <TouchableOpacity>
             <View

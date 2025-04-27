@@ -1,3 +1,4 @@
+// Import necessary components and libraries
 import {
   View,
   ScrollView,
@@ -15,18 +16,23 @@ import { iconMap } from "@/helpers/networkIcnMap";
 import { Contact } from "lucide-react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 
+// Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
   const parsed = parseInt(value, 10); // specify radix 10 for clarity
   return isNaN(parsed) ? null : parsed;
 };
 
 export default function BuyAirtime() {
+  // Get screen dimensions
   const { width } = Dimensions.get("window");
+  // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
 
+  // State variables for user input
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  // Handle changes to the amount input
   const handleAmountChange = (amount: string) => {
     const parsedAmount = parseAmount(amount);
 
@@ -37,6 +43,7 @@ export default function BuyAirtime() {
     }
   };
 
+  // Handle changes to the phone number input
   const handlePhoneNumberChange = (phoneNumber: string) => {
     if (phoneNumber.length > 11) {
       return;
@@ -46,9 +53,10 @@ export default function BuyAirtime() {
   };
 
   return (
+    // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
+      {/* Section for displaying previous transactions */}
       <View style={{ backgroundColor: colorScheme.secondary }}>
-        {/* <View style={{ backgroundColor: "rgb(44, 44, 44)" }}> */}
         <ScrollView
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -63,17 +71,20 @@ export default function BuyAirtime() {
                 padding: 10,
               }}
             >
+              {/* Display network icon */}
               <Image
                 source={iconMap[transaction.network]}
                 contentFit="cover"
                 style={{ width: 30, height: 30, borderRadius: 10 }}
               />
+              {/* Display transaction number */}
               <AppText style={{ fontSize: 12 }}>{transaction.number}</AppText>
             </Pressable>
           ))}
         </ScrollView>
       </View>
 
+      {/* Section for user input and airtime plans */}
       <View
         style={{
           padding: 20,
@@ -84,6 +95,7 @@ export default function BuyAirtime() {
           marginHorizontal: 10,
         }}
       >
+        {/* Display user balance */}
         <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
           Balance: ₦535
         </AppText>
@@ -97,11 +109,13 @@ export default function BuyAirtime() {
             marginTop: 20,
           }}
         >
+          {/* Display selected network icon */}
           <Image
             source={iconMap["mtn"]}
             contentFit="cover"
             style={{ width: 25, height: 25, borderRadius: 10 }}
           />
+          {/* Input field for phone number */}
           <TextInput
             style={{
               flex: 1,
@@ -116,6 +130,7 @@ export default function BuyAirtime() {
             keyboardType="phone-pad"
           />
 
+          {/* Button to open contact list */}
           <Pressable>
             <Contact color="white" size={20} />
           </Pressable>
@@ -135,6 +150,7 @@ export default function BuyAirtime() {
               marginTop: 10,
             }}
           >
+            {/* Display predefined airtime amounts */}
             {[100, 200, 300, 400, 500, 1000, 1500, 2000].map((item) => (
               <TouchableOpacity
                 onPress={() => handleAmountChange(item.toString())}
@@ -165,6 +181,7 @@ export default function BuyAirtime() {
               borderColor: "rgb(105, 104, 104)",
             }}
           >
+            {/* Input field for custom airtime amount */}
             <AppText style={{ fontSize: 18 }}>₦</AppText>
             <TextInput
               style={{
@@ -182,6 +199,7 @@ export default function BuyAirtime() {
               keyboardType="phone-pad"
             />
 
+            {/* Button to initiate payment */}
             <Pressable
               style={{
                 paddingHorizontal: 15,

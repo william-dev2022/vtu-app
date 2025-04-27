@@ -1,3 +1,4 @@
+// Import necessary components and libraries
 import { View, ScrollView, Pressable } from "react-native";
 import React, { useContext } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
@@ -6,6 +7,7 @@ import ThemedContainer from "@/components/ThemedContainer";
 import DetailRow from "@/components/DetailRow";
 
 export default function ProfileDetails() {
+  // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
 
   // Mocked user details (you can later fetch real ones)
@@ -19,6 +21,7 @@ export default function ProfileDetails() {
   };
 
   return (
+    // Themed container for consistent styling
     <ThemedContainer style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{
@@ -27,6 +30,7 @@ export default function ProfileDetails() {
         }}
         accessibilityLabel="Profile details screen"
       >
+        {/* Header for profile details */}
         <AppText
           bold
           style={{ fontSize: 24, marginBottom: 20, color: colorScheme.text }}
