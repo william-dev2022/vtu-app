@@ -28,24 +28,24 @@ const Services = () => {
   const services: Service[] = [
     {
       name: "Airtime",
-      link: "/home/buy-airtime",
+      link: "/buy-airtime",
       icon: (
         <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
       ),
     },
     {
       name: "Data",
-      link: "/home/buy-data",
+      link: "/buy-data",
       icon: <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />,
     },
     {
       name: "Electricity",
-      link: "/home/buy-electricity",
+      link: "/buy-electricity",
       icon: <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />,
     },
     {
       name: "More",
-      link: "/home/buy-airtime",
+      link: "/buy-airtime",
       icon: (
         <Ionicons
           name="ellipsis-vertical-circle-outline"

@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   },
   regularText: {
     fontFamily: "Krub_400Regular",
+    // fontFamily: "Poppins_400Regular",
   },
   boldText: {
     fontFamily: "Krub_600SemiBold",
