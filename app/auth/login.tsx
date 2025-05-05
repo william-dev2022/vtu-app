@@ -59,6 +59,7 @@ export default function login() {
           id: string;
           name: string;
           phoneNumber: string;
+          isVerified: boolean;
         };
       };
 
@@ -101,7 +102,7 @@ export default function login() {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/onboarding-first.png")}
+      source={require("../../assets/images/onboarding-first-v2.png")}
       style={styles.contentContainer}
     >
       <StatusBar translucent backgroundColor="transparent" />
@@ -160,10 +161,24 @@ export default function login() {
             marginBottom: 20,
             justifyContent: "flex-end",
             alignItems: "flex-end",
+            width: wp(85),
           }}
         >
-          <Link href="/auth/register">
-            <AppText style={{ color: "#fff" }}>Forget Password</AppText>
+          <Link
+            href="/auth/register"
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(255, 255, 255, 0.5)",
+              borderStyle: "dashed",
+            }}
+          >
+            <AppText
+              style={{
+                color: "#fff",
+              }}
+            >
+              Forget Password
+            </AppText>
           </Link>
         </View>
 
@@ -186,8 +201,18 @@ export default function login() {
           }}
         >
           <AppText style={{ color: "#fff" }}>Don't have an account?</AppText>
-          <Link href="/auth/register">
-            <AppText style={{ color: "#fff" }}>Register</AppText>
+          <Link
+            href="/auth/register"
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(255, 255, 255, 0.5)",
+              borderStyle: "dashed",
+              marginTop: 5,
+            }}
+          >
+            <AppText style={{ color: "rgb(49, 140, 0)" }}>
+              Poceed To Register
+            </AppText>
           </Link>
         </View>
       </View>

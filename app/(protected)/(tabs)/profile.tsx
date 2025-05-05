@@ -6,9 +6,12 @@ import SettingThemeToggle from "@/components/SettingThemeToggle";
 import SettingsItemList from "@/components/SettingItemList";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import useAuth from "@/context/AuthContext";
 
 export default function profile() {
   const router = useRouter();
+  const { signOut } = useAuth();
+
   return (
     <ThemedContainer style={{ paddingTop: 60 }}>
       <View
@@ -83,7 +86,7 @@ export default function profile() {
         />
         <SettingsItemList
           title={"Log Out"}
-          onPress={() => {}}
+          onPress={signOut}
           iconText="power-cycle"
         />
       </View>

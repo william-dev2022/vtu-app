@@ -20,6 +20,7 @@ type User = {
   id: string;
   name: string;
   phoneNumber: string;
+  isVerified: boolean;
   // Add more fields based on your backend
 };
 
@@ -90,9 +91,13 @@ export default function AuthProvider({
       setUser(user);
       tokenRef.current = token;
 
+      if (user.isVerified) {
+        console.log("User is verified, redirecting to protected route");
+        router.replace("/(protected)");
+        return;
+      }
       console.log(tokenRef.current, user);
-      router.replace("/");
-      console.log("Redirect call made");
+      router.replace("/auth/verify");
     },
     []
   );

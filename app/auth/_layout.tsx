@@ -24,6 +24,7 @@ export default function _layout() {
         }}
       />
       <Stack.Screen name="register" />
+      <Stack.Screen name="verify" />
     </Stack>
   );
 }

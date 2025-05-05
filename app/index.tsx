@@ -2,33 +2,38 @@ import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ONBORDING_KEY } from "@/constants";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
+import useAuth from "@/context/AuthContext";
 
 export default function Index() {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
-  // This is the main entry point of your app
+
+  const { isLoading: isAuthLoading, token, user } = useAuth();
 
   useEffect(() => {
     const checkOnboarding = async () => {
       const onboardingStatus = await AsyncStorage.getItem(ONBORDING_KEY);
       setIsOnboardingComplete(onboardingStatus === "done");
+      setIsLoading(false);
     };
 
     checkOnboarding();
   }, []);
 
+  // ⛔ Avoid rendering or redirecting until both states are resolved
+  if (isLoading || isAuthLoading) return null;
+
   if (!isOnboardingComplete) {
-    // If onboarding is complete, navigate to the main app
-    router.replace({ pathname: "/onboarding" });
-    // return <Redirect href="/on" />;
+    return <Redirect href="/onboarding" />;
   }
 
-  //check if onboarding has been viited before
+  if (token && user) {
+    if (user.isVerified) {
+      return <Redirect href="/(protected)" />;
+    }
+    return <Redirect href="/auth/verify" />;
+  }
 
-  return (
-    <View>
-      <Text>Index Page</Text>
-    </View>
-  );
+  return <Redirect href="/auth/login" />;
 }

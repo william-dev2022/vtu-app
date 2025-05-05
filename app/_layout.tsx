@@ -100,6 +100,30 @@ const toastConfig: Omit<ToastProviderProps, "children"> = {
         <AppText style={{ color: "white" }}>{toast.message}</AppText>
       </View>
     ),
+    success: (toast) => (
+      <View
+        style={{
+          backgroundColor: "rgba(0, 87, 180, 0.5)",
+          padding: 10,
+          borderRadius: 8,
+          // marginLeft: "auto",
+        }}
+      >
+        <AppText style={{ color: "white" }}>{toast.message}</AppText>
+      </View>
+    ),
+    normal: (toast) => (
+      <View
+        style={{
+          backgroundColor: "#09090b",
+          padding: 10,
+          borderRadius: 8,
+          // marginLeft: "auto",
+        }}
+      >
+        <AppText style={{ color: "white" }}>{toast.message}</AppText>
+      </View>
+    ),
   },
 };
 
