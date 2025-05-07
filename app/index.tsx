@@ -1,5 +1,4 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ONBORDING_KEY } from "@/constants";
 import { Redirect } from "expo-router";

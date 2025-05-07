@@ -3,6 +3,7 @@ import {
   getStorageItemAsync,
   setStorageItemAsync,
 } from "@/helpers/secureStorage";
+import { User } from "@/type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
@@ -15,14 +16,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-type User = {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  isVerified: boolean;
-  // Add more fields based on your backend
-};
 
 type AuthContextType = {
   signIn: ({ token, user }: { token: string; user: User }) => void;

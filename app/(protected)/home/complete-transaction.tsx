@@ -26,7 +26,8 @@ export default function CompleteTransaction({ handlePinSubmit }: Props) {
           width: "100%",
           padding: 20,
           borderRadius: 10,
-          height: "46%",
+          // height: "46%",
+          paddingBottom: 20,
           backgroundColor: colorScheme.secondary,
         }}
       >

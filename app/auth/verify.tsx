@@ -127,6 +127,8 @@ export default function verify() {
         }
       );
 
+      console.log("Response from server:", response);
+
       if (response.status !== 200) {
         toast.show("Invalid response from server, try again later", {
           type: "danger",
@@ -174,7 +176,6 @@ export default function verify() {
     } finally {
       setIsLoading(false);
     }
-    toast.show("Verifying code...");
   };
 
   const handleCodeInput = (newCode: string) => {

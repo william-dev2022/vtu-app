@@ -1,12 +1,34 @@
-import { View, ScrollView, TextInput } from "react-native";
+import { View, ScrollView } from "react-native";
 import React from "react";
 import AppText from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import TransactionList from "@/components/TransactionList";
-import { transactions } from "@/data/sample";
 import ThemedContainer from "@/components/ThemedContainer";
+import { useAppData } from "@/providers/AppDataProvider";
+import AppErrorScreen from "@/components/AppErrorScreen";
 
 export default function TransactionsTab() {
+  const { loading, transactions, error } = useAppData();
+
+  if (loading) {
+    return (
+      <AppErrorScreen
+        title="Loading..."
+        description="Please wait"
+        buttonText={""}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <AppErrorScreen
+        buttonText="Retry"
+        title="Something Went Wrong"
+        description="check your internet connection and retry"
+      />
+    );
+  }
   return (
     <ThemedContainer>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
@@ -48,10 +70,7 @@ export default function TransactionsTab() {
             </AppText>
           </View>
           {/* History */}
-          <TransactionList
-            transactions={transactions.slice(0, 10)}
-            onPress={() => {}}
-          />
+          <TransactionList transactions={transactions} onPress={() => {}} />
         </View>
       </ScrollView>
     </ThemedContainer>

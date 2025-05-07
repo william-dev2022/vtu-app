@@ -7,11 +7,13 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
+  Keyboard,
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
 import {
+  DataPlan,
   groupedPlans,
   previousTransactions as previousAirtimeTransactions,
 } from "@/data/sample";
@@ -23,6 +25,10 @@ import CompleteTransaction from "@/components/CompleteTransaction";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
+import AppLoadingIndicator from "@/components/AppLoadingIndicator";
+import axios from "axios";
+import { API_URL } from "@/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
@@ -39,10 +45,11 @@ export default function BuyData() {
   const toast = useToast();
 
   // State variables for user input and selected plan menu
-  const [amount, setAmount] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<DataPlan | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [currentPlanMenu, setCurrentPlanMenu] =
     useState<keyof typeof groupedPlans>("daily");
+  const [isLoading, setIsLoading] = useState(false);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -60,7 +67,35 @@ export default function BuyData() {
     setIsModalVisible(false);
   };
 
+  const submitRequest = async (pin: string) => {
+    setIsLoading(true);
+    hideBottomSheet();
+    //validate inputs
+    if (phoneNumber.length < 11) {
+      toast.show("Please enter a valid phone number 👋", {
+        type: "danger",
+        placement: "top",
+        animationType: "zoom-in",
+        dangerColor: "red",
+      });
+      return;
+    }
+
+    if (pin.length != 4) {
+      toast.show("Please enter a valid pin 👋", {
+        type: "danger",
+        placement: "top",
+        animationType: "zoom-in",
+        dangerColor: "red",
+      });
+      return;
+    }
+
+    // setIsLoading(false);
+  };
+
   const handleConfirmation = () => {
+    Keyboard.dismiss(); // Dismiss the keyboard when the button is pressed
     //check if user provided a phone number and amount
     if (phoneNumber.length < 11) {
       toast.show("Please enter a valid phone number 👋", {
@@ -71,6 +106,11 @@ export default function BuyData() {
       });
       return;
     }
+
+    // const response = axios.post(`${API_URL}/buy-data`, {
+    //   phoneNumber,
+    //   planId: "500MBSME",
+    // });
 
     // Proceed with transaction logic
     showBottomSheet();
@@ -86,12 +126,15 @@ export default function BuyData() {
           setIsModalVisible(false); // Update the state to reflect the modal is closed
           return true; // Prevent default back button behavior
         }
+        if (isLoading) {
+          return true;
+        }
         return false; // Allow default back button behavior
       }
     );
 
     return () => backHandler.remove();
-  }, [isModalVisible]);
+  }, [isModalVisible, isLoading]);
 
   // Handle changes to the phone number input
   const handlePhoneNumberChange = (phoneNumber: string) => {
@@ -106,41 +149,7 @@ export default function BuyData() {
     // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
       {/* Section for displaying previous transactions */}
-      <View style={{ backgroundColor: colorScheme.secondary }}>
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          style={{ paddingTop: 20 }}
-        >
-          {previousAirtimeTransactions.map((transaction) => (
-            <Pressable
-              onPress={() => handlePhoneNumberChange(transaction.number)}
-              key={transaction.id}
-              style={{
-                alignItems: "center",
-                padding: 10,
-              }}
-            >
-              {/* Display network icon */}
-              <Image
-                source={iconMap[transaction.network]}
-                contentFit="cover"
-                style={{ width: 30, height: 30, borderRadius: 10 }}
-              />
-              {/* Display transaction number */}
-              <AppText
-                style={{
-                  fontSize: 12,
-                  fontFamily: "Poppins_400Regular",
-                  marginTop: 4,
-                }}
-              >
-                {transaction.number}
-              </AppText>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
+      {previousNumbers(colorScheme, handlePhoneNumberChange)}
 
       {/* Section for user input and data plans */}
       <View
@@ -251,7 +260,8 @@ export default function BuyData() {
                   justifyContent: "center",
                   rowGap: 5,
                 }}
-                onPress={handleConfirmation}
+                // onPress={showBottomSheet}
+                onPress={() => setSelectedPlan(plan)}
               >
                 <AppText style={{ fontSize: 16 }}>{plan.data}</AppText>
                 <AppText style={{ fontSize: 12 }}>{plan.duration}</AppText>
@@ -262,10 +272,103 @@ export default function BuyData() {
         </View>
       </View>
 
+      {/* submit */}
+      <View
+        style={{
+          padding: 20,
+          marginTop: 20,
+          minHeight: 40,
+          backgroundColor: colorScheme.secondary,
+          borderRadius: 10,
+          marginHorizontal: 10,
+        }}
+      >
+        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
+          Amount: ₦{selectedPlan ? selectedPlan.price : "0"}
+        </AppText>
+
+        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
+          Plan: {selectedPlan ? selectedPlan.data : "0"}
+        </AppText>
+
+        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
+          Duration: {selectedPlan ? selectedPlan.duration : "0"}
+        </AppText>
+
+        <Pressable
+          onPress={handleConfirmation}
+          style={{
+            padding: 10,
+            backgroundColor: "#065f46",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 5,
+          }}
+        >
+          <AppText style={{ fontSize: 18, color: "white" }}>Pay</AppText>
+        </Pressable>
+      </View>
+      <AppLoadingIndicator isLoading={isLoading} />
       <CompleteTransaction
         bottomSheetModalRef={bottomSheetModalRef}
         hideBottomSheet={hideBottomSheet}
+        handlePinSubmit={submitRequest}
       />
     </ThemedContainer>
+  );
+}
+
+function previousNumbers(
+  colorScheme: {
+    text: string;
+    background: string;
+    tint: string;
+    tabIconDefault: string;
+    tabIconSelected: string;
+    icon: string;
+    secondary: string;
+    switchTrackTrue: string;
+    switchTrackFalse: string;
+    tabBarInactiveTintColor: string;
+    tabBarActiveTintColor: string;
+  },
+  handlePhoneNumberChange: (phoneNumber: string) => void
+) {
+  return (
+    <View style={{ backgroundColor: colorScheme.secondary }}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        style={{ paddingTop: 20 }}
+      >
+        {previousAirtimeTransactions.map((transaction) => (
+          <Pressable
+            onPress={() => handlePhoneNumberChange(transaction.number)}
+            key={transaction.id}
+            style={{
+              alignItems: "center",
+              padding: 10,
+            }}
+          >
+            {/* Display network icon */}
+            <Image
+              source={iconMap[transaction.network]}
+              contentFit="cover"
+              style={{ width: 30, height: 30, borderRadius: 10 }}
+            />
+            {/* Display transaction number */}
+            <AppText
+              style={{
+                fontSize: 12,
+                fontFamily: "Poppins_400Regular",
+                marginTop: 4,
+              }}
+            >
+              {transaction.number}
+            </AppText>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
   );
 }

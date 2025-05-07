@@ -164,7 +164,7 @@ export const previousTransactions = [
   { id: 10, network: "airtel", number: "08023456789" },
 ];
 
-interface DataPlan {
+export interface DataPlan {
   planName: string;
   price: number;
   data: string;

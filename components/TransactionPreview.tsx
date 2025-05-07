@@ -3,8 +3,6 @@ import { Pressable, StyleSheet } from "react-native";
 import AppText from "./AppText";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { ThemeContext } from "@/context/ThemeContext";
-import TransactionCodeInputBox from "./TransactionCodeInputBox";
-import TransactionCodeInputPad from "./TransactionCodeInputPad";
 
 type Props = {
   bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
@@ -38,11 +36,8 @@ export default function CompleteTransaction({
         <AppText
           style={{ fontSize: 18, marginBottom: 10, textAlign: "center" }}
         >
-          Enter PIN
+          Confirm Details
         </AppText>
-        <TransactionCodeInputBox pin={pin.split("")} showPin={false} />
-
-        <TransactionCodeInputPad pin={pin} setPin={setPin} />
 
         <Pressable
           style={{

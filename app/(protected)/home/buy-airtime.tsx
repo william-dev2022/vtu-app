@@ -8,31 +8,34 @@ import {
   TouchableOpacity,
   StyleSheet,
   BackHandler,
-  ToastAndroid,
 } from "react-native";
-import React, {
-  useContext,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
 import { previousTransactions as previousAirtimeTransactions } from "@/data/sample";
 import { Image } from "expo-image";
 import { iconMap } from "@/helpers/networkIcnMap";
-import { Contact, Delete } from "lucide-react-native";
+import { Contact } from "lucide-react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { applyOpacityToColor } from "@/helpers/colorUtils";
-import { Ionicons } from "@expo/vector-icons";
-import TransactionCodeInputBox from "@/components/TransactionCodeInputBox";
-import TransactionCodeInputPad from "@/components/TransactionCodeInputPad";
 import { useRouter } from "expo-router";
 import CompleteTransaction from "@/components/CompleteTransaction";
 import Toast from "react-native-toast-message";
 import { useToast } from "react-native-toast-notifications";
+import { determineNetwork } from "@/helpers/common";
+import AppLoadingIndicator from "@/components/AppLoadingIndicator";
+import axios from "axios";
+import { API_URL, USERI_TOKEN_KEY } from "@/constants";
+import useAuth from "@/context/AuthContext";
+import { useAppData } from "@/providers/AppDataProvider";
+import { getStorageItemAsync } from "@/helpers/secureStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  addRecentAirtimeSubcriptionNumber,
+  getRecentAirtimeSubcriptionNumbers,
+  RECENT_AIRTIME_NUMBERS_TYPE,
+} from "@/api/localStorage";
+import RecentSubcriptionNumbers from "@/components/RecentSubcriptionNumbers";
 
 // Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
@@ -50,11 +53,15 @@ export default function BuyAirtime() {
   // State variables for user input
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [pin, setPin] = useState("");
+  const [network, setNetwork] = useState("");
+  const [recentNumbers, setRecentNumbers] = useState<
+    RECENT_AIRTIME_NUMBERS_TYPE[]
+  >([]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { addTransaction } = useAppData();
 
   // Update the function to show the bottom sheet
   const showBottomSheet = () => {
@@ -86,10 +93,24 @@ export default function BuyAirtime() {
     return () => backHandler.remove();
   }, [isModalVisible]);
 
+  const loadRecentNumbers = async () => {
+    try {
+      const recentNumbers = await getRecentAirtimeSubcriptionNumbers();
+      if (recentNumbers) {
+        setRecentNumbers(recentNumbers);
+      }
+    } catch (error) {
+      console.error("Error loading recent numbers:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadRecentNumbers();
+  }, []);
+
   // Handle changes to the amount input
   const handleAmountChange = (amount: string) => {
     const parsedAmount = parseAmount(amount);
-
     if (parsedAmount != null) {
       setAmount(amount);
     } else {
@@ -102,12 +123,77 @@ export default function BuyAirtime() {
     if (phoneNumber.length > 11) {
       return;
     }
+    if (phoneNumber.length === 4 || phoneNumber.length === 11) {
+      const network = determineNetwork(phoneNumber);
+      setNetwork(network ?? "");
+    }
     setPhoneNumber(phoneNumber);
+  };
+
+  const submitRequest = async (pin: string) => {
+    hideBottomSheet();
+    setIsLoading(true);
+
+    try {
+      const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
+      const phone = "+234" + phoneNumber.slice(1);
+      const response = await axios.post(
+        `${API_URL}/buy-airtime`,
+        {
+          phone_number: phone,
+          amount,
+          network,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
+      );
+
+      if (response.status != 200) {
+        throw new Error("Invalid server response");
+      }
+
+      const { transaction } = response.data;
+
+      addTransaction(transaction);
+      addRecentAirtimeSubcriptionNumber(phoneNumber);
+      setRecentNumbers((prev) => {
+        const newRecentNumbers = [{ number: phoneNumber, network }, ...prev];
+        if (newRecentNumbers.length > 5) {
+          newRecentNumbers.slice(0, 5); // Remove the oldest number
+        }
+        return newRecentNumbers;
+      });
+      toast.show("Request successfull", { type: "success" });
+    } catch (error: any) {
+      console.log(error);
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 422 && data?.message) {
+          toast.show(data?.message, { type: "danger" });
+        } else {
+          toast.show("An unexpected error occurred. Please try again later.", {
+            type: "danger",
+          });
+        }
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.show("Network error. Please check your connection.", {
+          type: "danger",
+        });
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleConfirmation = () => {
     //check if user provided a phone number and amount
-    if (phoneNumber.length < 11) {
+    if (phoneNumber.length != 11) {
       toast.show("Please enter a valid phone number 👋", {
         type: "danger",
         placement: "top",
@@ -127,53 +213,19 @@ export default function BuyAirtime() {
       return;
     }
 
-    // Proceed with transaction logic
     showBottomSheet();
-  };
-
-  // Function to handle PIN submission
-  const handlePinSubmit = () => {
-    if (pin.length === 4) {
-      // Proceed with transaction logic
-      console.log("PIN entered:", pin);
-      hideBottomSheet();
-    } else {
-      alert("Please enter a 4-digit PIN.");
-    }
   };
 
   return (
     // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0, flex: 1 }}>
       {/* Section for displaying previous transactions */}
-      <View style={{ backgroundColor: colorScheme.secondary }}>
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          style={{ paddingTop: 20 }}
-        >
-          {previousAirtimeTransactions.map((transaction) => (
-            <Pressable
-              onPress={() => handlePhoneNumberChange(transaction.number)}
-              key={transaction.id}
-              style={{
-                alignItems: "center",
-                padding: 10,
-              }}
-            >
-              {/* Display network icon */}
-              <Image
-                source={iconMap[transaction.network]}
-                contentFit="cover"
-                style={{ width: 30, height: 30, borderRadius: 10 }}
-              />
-              {/* Display transaction number */}
-              <AppText style={{ fontSize: 12 }}>{transaction.number}</AppText>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-
+      <RecentSubcriptionNumbers
+        onSelect={(number) => {
+          handlePhoneNumberChange(number);
+        }}
+        recentNumbers={recentNumbers}
+      />
       {/* Section for user input and airtime plans */}
       <View
         style={{
@@ -201,9 +253,14 @@ export default function BuyAirtime() {
         >
           {/* Display selected network icon */}
           <Image
-            source={iconMap["mtn"]}
+            source={iconMap[network]}
             contentFit="cover"
-            style={{ width: 25, height: 25, borderRadius: 10 }}
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
           />
           {/* Input field for phone number */}
           <TextInput
@@ -290,7 +347,7 @@ export default function BuyAirtime() {
             />
 
             {/* Button to initiate payment */}
-            <Pressable
+            {/* <Pressable
               style={{
                 paddingHorizontal: 15,
                 paddingVertical: 5,
@@ -301,16 +358,48 @@ export default function BuyAirtime() {
               onPress={handleConfirmation}
             >
               <AppText style={{ color: "white" }}>Pay</AppText>
-            </Pressable>
+            </Pressable> */}
           </View>
         </View>
       </View>
 
-      {/* Render the bottom sheet */}
+      {/* submit */}
+      <View
+        style={{
+          padding: 20,
+          marginTop: 20,
+          minHeight: 40,
+          backgroundColor: colorScheme.secondary,
+          borderRadius: 10,
+          marginHorizontal: 10,
+        }}
+      >
+        {amount && (
+          <AppText
+            style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}
+          >
+            Amount: ₦{amount}
+          </AppText>
+        )}
+
+        <Pressable
+          onPress={handleConfirmation}
+          style={{
+            padding: 10,
+            backgroundColor: "#065f46",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 5,
+          }}
+        >
+          <AppText style={{ fontSize: 18, color: "white" }}>Pay</AppText>
+        </Pressable>
+      </View>
+      <AppLoadingIndicator isLoading={isLoading} />
       <CompleteTransaction
         bottomSheetModalRef={bottomSheetModalRef}
-        // handlePinSubmit={handlePinSubmit}
         hideBottomSheet={hideBottomSheet}
+        handlePinSubmit={submitRequest}
       />
     </ThemedContainer>
   );

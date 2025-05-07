@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import AppText from "./AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 import { iconMap } from "@/helpers/networkIcnMap";
+import { formatDateTime } from "@/helpers/common";
 
 // Define the props for the TransactionList component
 type Props = {
@@ -48,7 +49,22 @@ const styles = StyleSheet.create({
 const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
   // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
+  const { amount, date, type, meta } = transaction;
+  let network = (
+    (meta as Record<string, any>)?.network as string
+  )?.toLowerCase();
 
+  network =
+    network === "9mobile" || network === "etisalat" ? "ninemobile" : network;
+  const transactionType = type?.toLowerCase();
+  const icon =
+    transactionType == "data" || transactionType == "airtime"
+      ? network
+      : transactionType == "deposit"
+      ? "fund"
+      : "electricity";
+
+  console.log(network, icon, type);
   return (
     // Pressable item for each transaction
     <Pressable
@@ -57,7 +73,7 @@ const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
       {/* Display transaction icon */}
       <View>
         <Image
-          source={iconMap[transaction.icon]}
+          source={iconMap[icon]}
           contentFit="cover"
           style={{ width: 40, height: 40, borderRadius: 10 }}
         />
@@ -65,14 +81,14 @@ const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
 
       {/* Display transaction details */}
       <View>
-        <AppText>{transaction.name}</AppText>
+        <AppText>{type}</AppText>
         <AppText style={{ fontSize: 12, color: "#9F9FA9" }}>
-          {transaction.date}
+          {formatDateTime(date)}
         </AppText>
       </View>
 
       {/* Display transaction amount */}
-      <AppText style={{ marginLeft: "auto" }}>{transaction.amount}</AppText>
+      <AppText style={{ marginLeft: "auto" }}>₦{amount + ".00"}</AppText>
     </Pressable>
   );
 };

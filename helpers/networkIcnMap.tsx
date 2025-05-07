@@ -4,5 +4,5 @@ export const iconMap: Record<string, any> = {
   mtn: require("@/assets/images/services-logo/mtn.jpg"),
   electricity: require("@/assets/images/services-logo/electricity.jpeg"),
   glo: require("@/assets/images/services-logo/glo.jpeg"),
-  nineMobile: require("@/assets/images/services-logo/9mobile.jpg"),
+  ninemobile: require("@/assets/images/services-logo/9mobile.jpg"),
 };

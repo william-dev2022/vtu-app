@@ -4,12 +4,8 @@ import AppText from "./AppText";
 import { useContext } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import Colors from "@/constants/Colors";
-
-type Service = {
-  name: string;
-  link?: string | any;
-  icon: JSX.Element;
-};
+import { Service } from "@/type";
+import { Ionicons } from "@expo/vector-icons";
 
 const styles = StyleSheet.create({
   button: {
@@ -22,11 +18,35 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ServiceButton = ({ name, link, icon }: Service) => {
+export const ServiceButton = ({ name }: Service) => {
   const { currentTheme } = useContext(ThemeContext);
   const router = useRouter();
 
   const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
+  const serviceName = name.toLowerCase();
+  const icon =
+    serviceName == "airtime" ? (
+      <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
+    ) : serviceName == "data" ? (
+      <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />
+    ) : serviceName == "electricity" ? (
+      <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />
+    ) : (
+      <Ionicons
+        name="ellipsis-vertical-circle-outline"
+        size={16}
+        color={colorScheme.icon}
+      />
+    );
+
+  const link =
+    serviceName == "airtime"
+      ? "/home/buy-airtime"
+      : serviceName == "data"
+      ? "/home/buy-data"
+      : serviceName == "electricity"
+      ? "/home/buy-electricity"
+      : "/home/buy-airtime";
 
   const handlePress = () => {
     if (link) {

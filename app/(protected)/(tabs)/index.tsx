@@ -12,11 +12,27 @@ import { CirclePlus, Eye } from "lucide-react-native";
 import RecentTransaction from "@/components/RecentTransaction";
 import ThemedContainer from "@/components/ThemedContainer";
 import { ThemeContext } from "@/context/ThemeContext";
-import Colors from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import Services from "@/components/Services";
+import { useAppData } from "@/providers/AppDataProvider";
+import AppLoadingIndicator from "@/components/AppLoadingIndicator";
+import AppErrorScreen from "@/components/AppErrorScreen";
+import useAuth from "@/context/AuthContext";
+import { formatAmount } from "@/helpers/common";
 
 export default function Index() {
+  const { loading, transactions, error } = useAppData();
+
+  if (error) {
+    return (
+      <AppErrorScreen
+        buttonText="Retry"
+        title="Something Went Wrong"
+        description="check your internet connection and retry"
+      />
+    );
+  }
+
   return (
     <ThemedContainer>
       <ScrollView
@@ -27,15 +43,19 @@ export default function Index() {
           <Header />
           <Services />
 
-          <RecentTransaction />
+          <RecentTransaction transactions={transactions.slice(0, 5)} />
         </View>
       </ScrollView>
+
+      {loading && <AppLoadingIndicator isLoading={loading} />}
     </ThemedContainer>
   );
 }
 
 const Header = () => {
   const { colorScheme } = useContext(ThemeContext);
+  const { user } = useAuth();
+  const { balance } = useAppData();
 
   const router = useRouter();
   return (
@@ -69,7 +89,7 @@ const Header = () => {
           </View>
 
           <AppText>
-            Welcome, <AppText bold>Alex</AppText>
+            Welcome, <AppText bold>{user ? user.name : "Alex"}</AppText>
           </AppText>
         </View>
 
@@ -97,7 +117,9 @@ const Header = () => {
               columnGap: 10,
             }}
           >
-            <AppText style={{ fontSize: 25 }}>₦150.00</AppText>
+            <AppText style={{ fontSize: 24 }}>
+              ₦{balance ? formatAmount(balance) : "∗∗∗"}
+            </AppText>
             <Pressable>
               <Eye size={18} color="white" />
             </Pressable>
