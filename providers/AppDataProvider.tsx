@@ -72,7 +72,7 @@ const AppDataProvider = ({ children }: { children: React.ReactNode }) => {
         services: Service[];
       };
 
-      if (!transactions || !balance || !services) {
+      if (!transactions || !services) {
         throw new Error("Invalid response from server");
       }
 

@@ -118,7 +118,7 @@ const Header = () => {
             }}
           >
             <AppText style={{ fontSize: 24 }}>
-              ₦{balance ? formatAmount(balance) : "∗∗∗"}
+              ₦{balance != null && balance >= 0 ? formatAmount(balance) : "∗∗∗"}
             </AppText>
             <Pressable>
               <Eye size={18} color="white" />

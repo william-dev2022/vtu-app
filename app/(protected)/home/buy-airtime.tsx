@@ -61,7 +61,7 @@ export default function BuyAirtime() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { addTransaction } = useAppData();
+  const { addTransaction, balance } = useAppData();
 
   // Update the function to show the bottom sheet
   const showBottomSheet = () => {
@@ -131,6 +131,10 @@ export default function BuyAirtime() {
   };
 
   const submitRequest = async (pin: string) => {
+    if (!pin || pin.length < 4) {
+      toast.show("Please enter a valid pin", { type: "danger" });
+      return;
+    }
     hideBottomSheet();
     setIsLoading(true);
 
@@ -205,6 +209,16 @@ export default function BuyAirtime() {
     const parsedAmount = parseAmount(amount);
     if (parsedAmount === null || parsedAmount < 50) {
       toast.show("Please enter a valid amount, minimum of 50  👋", {
+        type: "danger",
+        placement: "top",
+        animationType: "zoom-in",
+        dangerColor: "red",
+      });
+      return;
+    }
+
+    if (balance < parsedAmount) {
+      toast.show("Insufficient balance", {
         type: "danger",
         placement: "top",
         animationType: "zoom-in",

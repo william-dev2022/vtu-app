@@ -16,11 +16,18 @@ export default function RecentSubcriptionNumbers({
   const { colorScheme } = useContext(ThemeContext);
 
   return (
-    <View style={{ backgroundColor: colorScheme.secondary }}>
+    <View
+      style={{
+        backgroundColor: colorScheme.secondary,
+        marginHorizontal: 10,
+        borderRadius: 10,
+        marginTop: 10,
+      }}
+    >
       <ScrollView
         showsHorizontalScrollIndicator={false}
         horizontal
-        style={{ paddingTop: 20 }}
+        style={{ paddingVertical: 5 }}
       >
         {recentNumbers.map((recent, index) => (
           <Pressable
@@ -38,7 +45,7 @@ export default function RecentSubcriptionNumbers({
               style={{ width: 30, height: 30, borderRadius: 10 }}
             />
             {/* Display transaction number */}
-            <AppText style={{ fontSize: 12 }}>{recent.number}</AppText>
+            <AppText style={{ fontSize: 10 }}>{recent.number}</AppText>
           </Pressable>
         ))}
       </ScrollView>

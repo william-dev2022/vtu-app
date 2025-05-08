@@ -1,8 +1,9 @@
- import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ONBORDING_KEY } from "@/constants";
 import { Redirect } from "expo-router";
 import useAuth from "@/context/AuthContext";
+import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,8 +21,12 @@ export default function Index() {
     checkOnboarding();
   }, []);
 
+  console.log("isLoading", isLoading);
+  console.log("isAuthLoading", isAuthLoading);
+
   // ⛔ Avoid rendering or redirecting until both states are resolved
-  if (isLoading || isAuthLoading) return null;
+  if (isLoading || isAuthLoading)
+    return <AppLoadingIndicator isLoading={isLoading || isAuthLoading} />;
 
   if (!isOnboardingComplete) {
     return <Redirect href="/onboarding" />;

@@ -1,10 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
-
-import { useColorScheme } from "@/components/useColorScheme";
 import {
   Krub_400Regular,
   Krub_600SemiBold,
@@ -22,10 +19,7 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { View } from "react-native";
 import AppText from "@/components/AppText";
 import AuthProvider from "@/providers/AuthProvider";
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -64,6 +58,7 @@ export default function RootLayout() {
     return null;
   }
 
+  console.log("isLoaded", loaded);
   return <RootLayoutNav />;
 }
 
@@ -128,8 +123,6 @@ const toastConfig: Omit<ToastProviderProps, "children"> = {
 };
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
     <ThemeProvider>
       {/* <ThemedContainer> */}

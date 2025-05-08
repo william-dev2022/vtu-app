@@ -12,11 +12,7 @@ import {
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
-import {
-  DataPlan,
-  groupedPlans,
-  previousTransactions as previousAirtimeTransactions,
-} from "@/data/sample";
+import { previousTransactions as previousAirtimeTransactions } from "@/data/sample";
 import { Image } from "expo-image";
 import { iconMap } from "@/helpers/networkIcnMap";
 import { Contact } from "lucide-react-native";
@@ -29,6 +25,14 @@ import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 import axios from "axios";
 import { API_URL } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DataPlan, GroupedPlanType } from "@/type";
+import { determineNetwork, wp } from "@/helpers/common";
+import RecentSubcriptionNumbers from "@/components/RecentSubcriptionNumbers";
+import {
+  getRecentAirtimeSubcriptionNumbers,
+  RECENT_AIRTIME_NUMBERS_TYPE,
+} from "@/api/localStorage";
+import { useAppData } from "@/providers/AppDataProvider";
 
 // Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
@@ -41,18 +45,65 @@ export default function BuyData() {
   const { width } = Dimensions.get("window");
   // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
+  const { balance } = useAppData();
 
   const toast = useToast();
 
   // State variables for user input and selected plan menu
+  const [plans, setPlans] = useState<GroupedPlanType | null>(null);
+  const [networks, setNetworks] = useState<string[]>([]);
+  const [currentNetwork, setCurentNetwork] = useState<string>("");
+
   const [selectedPlan, setSelectedPlan] = useState<DataPlan | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [currentPlanMenu, setCurrentPlanMenu] =
-    useState<keyof typeof groupedPlans>("daily");
+  const [currentPlanMenu, setCurrentPlanMenu] = useState<string>("daily");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [recentNumbers, setRecentNumbers] = useState<
+    RECENT_AIRTIME_NUMBERS_TYPE[]
+  >([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const loadRecentNumbers = async () => {
+    try {
+      const recentNumbers = await getRecentAirtimeSubcriptionNumbers();
+      if (recentNumbers) {
+        setRecentNumbers(recentNumbers);
+      }
+    } catch (error) {
+      console.error("Error loading recent numbers:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Load data plans from AsyncStorage
+    const loadPlans = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${API_URL}/data-plans`);
+
+        if (response.status !== 200) {
+          console.error("Failed to fetch data plans:", response.statusText);
+          return;
+        }
+
+        const { plans, networks } = response.data;
+
+        if (!plans || !networks) {
+          setPlans(null);
+        }
+        setPlans(plans);
+        setNetworks(networks);
+        setCurentNetwork(networks[0]);
+      } catch (error) {
+        console.error("Error loading plans from AsyncStorage:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadRecentNumbers();
+    loadPlans();
+  }, []);
 
   // Update the function to show the bottom sheet
   const showBottomSheet = () => {
@@ -68,6 +119,11 @@ export default function BuyData() {
   };
 
   const submitRequest = async (pin: string) => {
+    if (!pin || pin.length < 4) {
+      toast.show("Please enter a valid pin", { type: "danger" });
+      return;
+    }
+
     setIsLoading(true);
     hideBottomSheet();
     //validate inputs
@@ -99,6 +155,16 @@ export default function BuyData() {
     //check if user provided a phone number and amount
     if (phoneNumber.length < 11) {
       toast.show("Please enter a valid phone number 👋", {
+        type: "danger",
+        placement: "top",
+        animationType: "zoom-in",
+        dangerColor: "red",
+      });
+      return;
+    }
+
+    if (selectedPlan && balance < parseAmount(selectedPlan.price.toString())!) {
+      toast.show("Insufficient balance", {
         type: "danger",
         placement: "top",
         animationType: "zoom-in",
@@ -142,6 +208,12 @@ export default function BuyData() {
       return;
     }
 
+    if (phoneNumber.length === 4 || phoneNumber.length === 11) {
+      const network = determineNetwork(phoneNumber);
+      setCurentNetwork(network ?? "");
+    }
+    setPhoneNumber(phoneNumber);
+
     setPhoneNumber(phoneNumber);
   };
 
@@ -149,8 +221,12 @@ export default function BuyData() {
     // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
       {/* Section for displaying previous transactions */}
-      {previousNumbers(colorScheme, handlePhoneNumberChange)}
-
+      <RecentSubcriptionNumbers
+        onSelect={(number) => {
+          handlePhoneNumberChange(number);
+        }}
+        recentNumbers={recentNumbers}
+      />
       {/* Section for user input and data plans */}
       <View
         style={{
@@ -178,7 +254,7 @@ export default function BuyData() {
         >
           {/* Display selected network icon */}
           <Image
-            source={iconMap["mtn"]}
+            source={iconMap[currentNetwork ?? ""]}
             contentFit="cover"
             style={{ width: 25, height: 25, borderRadius: 10 }}
           />
@@ -208,32 +284,39 @@ export default function BuyData() {
         <View style={{ marginTop: 30 }}>
           <View
             style={{
-              justifyContent: "space-between",
+              justifyContent: "center",
               flexDirection: "row",
               marginBottom: 20,
             }}
           >
             {/* Tabs for selecting data plan categories */}
-            {Object.keys(groupedPlans).map((key, index) => (
+            {["daily", "weekly", "monthly"].map((validity, index) => (
               <Pressable
-                onPress={() =>
-                  setCurrentPlanMenu(key as keyof typeof groupedPlans)
-                }
+                onPress={() => setCurrentPlanMenu(validity)}
                 style={{
-                  borderBottomWidth: index == 0 ? 3 : 0,
-                  borderColor: "#0f766e",
-                  borderBottomRightRadius: 5,
-                  borderBottomLeftRadius: 5,
+                  paddingHorizontal: wp(4),
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-                key={key}
+                key={validity}
               >
                 <AppText
                   style={{
                     textTransform: "capitalize",
                   }}
                 >
-                  {key.toString()}
+                  {validity}
                 </AppText>
+
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    backgroundColor:
+                      currentPlanMenu == validity ? "#0f766e" : "transparent",
+                    borderRadius: 2,
+                  }}
+                />
               </Pressable>
             ))}
           </View>
@@ -248,26 +331,38 @@ export default function BuyData() {
             }}
           >
             {/* Display available data plans */}
-            {groupedPlans[currentPlanMenu].map((plan, index) => (
-              <TouchableOpacity
-                key={index}
-                style={{
-                  alignItems: "center",
-                  width: width * 0.2,
-                  padding: 10,
-                  backgroundColor: colorScheme.background,
-                  borderRadius: 10,
-                  justifyContent: "center",
-                  rowGap: 5,
-                }}
-                // onPress={showBottomSheet}
-                onPress={() => setSelectedPlan(plan)}
-              >
-                <AppText style={{ fontSize: 16 }}>{plan.data}</AppText>
-                <AppText style={{ fontSize: 12 }}>{plan.duration}</AppText>
-                <AppText style={{ fontSize: 12 }}>₦{plan.price}</AppText>
-              </TouchableOpacity>
-            ))}
+            {plans &&
+              plans[
+                currentNetwork == "ninemobile" ? "9mobile" : currentNetwork
+              ]?.map((plan, index) => {
+                if (plan.category !== currentPlanMenu) {
+                  return null; // Skip plans that don't match the selected validity
+                }
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={{
+                      alignItems: "center",
+                      width: width * 0.27,
+                      padding: 10,
+                      backgroundColor: colorScheme.background,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      rowGap: 5,
+                    }}
+                    // onPress={showBottomSheet}
+                    onPress={() => setSelectedPlan(plan)}
+                  >
+                    <AppText style={{ fontSize: 16, textAlign: "center" }}>
+                      {/* {plan.name} */}
+                      {plan.name.split(" ")[0]}
+                    </AppText>
+                    {/* <AppText style={{ fontSize: 12 }}>{plan.planId}</AppText> */}
+                    <AppText style={{ fontSize: 12 }}>{plan.validity}</AppText>
+                    <AppText style={{ fontSize: 12 }}>₦{plan.price}</AppText>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         </View>
       </View>
@@ -288,11 +383,11 @@ export default function BuyData() {
         </AppText>
 
         <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Plan: {selectedPlan ? selectedPlan.data : "0"}
+          Plan: {selectedPlan ? selectedPlan.name : "0"}
         </AppText>
 
         <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Duration: {selectedPlan ? selectedPlan.duration : "0"}
+          Duration: {selectedPlan ? selectedPlan.validity : "0"}
         </AppText>
 
         <Pressable

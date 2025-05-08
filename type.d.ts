@@ -39,3 +39,31 @@ export type Service = {
   link: string;
   status: string;
 };
+
+export type DataPlan = {
+  id: string;
+  planId: string;
+  category: string;
+  network: string;
+  status: string;
+  validity: string;
+  name: string;
+  price: number;
+};
+
+export type CablePlan = {
+  id: string;
+  name: string;
+  planId: string;
+  provider: string;
+  price: string;
+  description: string;
+  status: string;
+};
+
+export type GroupedPlanType = {
+  [key: string]: DataPlan[];
+};
+export type GroupedCableType = {
+  [key: string]: CablePlan[];
+};

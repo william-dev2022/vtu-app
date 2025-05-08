@@ -7,6 +7,7 @@ import { User } from "@/type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { store } from "expo-router/build/global-state/router-store";
 import {
   createContext,
   MutableRefObject,
@@ -45,6 +46,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     const loadToken = async (): Promise<void> => {
+      console.log("Loading Token");
       try {
         const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
         tokenRef.current = storedToken ?? "";
@@ -61,6 +63,8 @@ export default function AuthProvider({
             Authorization: `Bearer ${storedToken}`,
           },
         });
+
+        console.log(response);
 
         if (response.data) {
           const userData = response.data as User;
