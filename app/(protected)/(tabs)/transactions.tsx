@@ -6,9 +6,19 @@ import TransactionList from "@/components/TransactionList";
 import ThemedContainer from "@/components/ThemedContainer";
 import { useAppData } from "@/providers/AppDataProvider";
 import AppErrorScreen from "@/components/AppErrorScreen";
+import { formatAmount } from "@/helpers/common";
 
 export default function TransactionsTab() {
   const { loading, transactions, error } = useAppData();
+
+  const totalDeposits: number = transactions
+    .filter((transaction) => transaction.type.toLowerCase() === "deposit")
+    .reduce((acc, transaction) => acc + transaction.amount, 0);
+  const totalExpenses: number = transactions
+    .filter((transaction) => transaction.type.toLowerCase() != "deposit")
+    .reduce((acc, transaction) => acc + transaction.amount, 0);
+
+  // const balance = totalDeposits;
 
   if (loading) {
     return (
@@ -63,10 +73,16 @@ export default function TransactionsTab() {
           {/* Statistics */}
           <View style={{ flexDirection: "row", columnGap: 10 }}>
             <AppText>
-              IN - <AppText style={{ color: "#0f766e" }}>+₦10,000</AppText>
+              IN +
+              <AppText style={{ color: "#0f766e" }}>
+                {formatAmount(totalDeposits)}
+              </AppText>
             </AppText>
             <AppText>
-              OUT - <AppText style={{ color: "red" }}>-₦9,670</AppText>
+              OUT -{" "}
+              <AppText style={{ color: "red" }}>
+                {formatAmount(totalExpenses)}
+              </AppText>
             </AppText>
           </View>
           {/* History */}

@@ -29,8 +29,10 @@ export const ServiceButton = ({ name }: Service) => {
       <Ionicons name="cellular-outline" size={16} color={colorScheme.icon} />
     ) : serviceName == "data" ? (
       <Ionicons name="wifi-outline" size={16} color={colorScheme.icon} />
-    ) : serviceName == "electricity" ? (
-      <Ionicons name="bulb-outline" size={16} color={colorScheme.icon} />
+    ) : serviceName == "exam pin" ? (
+      <Ionicons name="book-outline" size={16} color={colorScheme.icon} />
+    ) : serviceName == "cable bill" ? (
+      <Ionicons name="tv-outline" size={16} color={colorScheme.icon} />
     ) : (
       <Ionicons
         name="ellipsis-vertical-circle-outline"
@@ -44,9 +46,9 @@ export const ServiceButton = ({ name }: Service) => {
       ? "/home/buy-airtime"
       : serviceName == "data"
       ? "/home/buy-data"
-      : serviceName == "electricity"
-      ? "/home/buy-electricity"
-      : "/home/buy-airtime";
+      : serviceName == "exam pin"
+      ? "/home/exam-pin"
+      : "/home/cable-subscription";
 
   const handlePress = () => {
     if (link) {

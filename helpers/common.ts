@@ -36,7 +36,8 @@ export function formatDateTime(input: string | Date): string {
 }
 
 export function formatAmount(amount: number): string {
-  return new Intl.NumberFormat("en-US").format(amount);
+  const formatter = new Intl.NumberFormat("en-NG");
+  return "₦" + formatter.format(amount);
 }
 
 export function determineNetwork(phoneNumber: string): string | null {
@@ -55,8 +56,19 @@ export function determineNetwork(phoneNumber: string): string | null {
       "0913",
       "0916",
     ],
-    Airtel: ["0802", "0808", "0701", "0708", "0812", "0902"],
-    Glo: ["0805", "0807", "0705", "0811", "0815", "0905"],
+    Airtel: [
+      "0802",
+      "0808",
+      "0701",
+      "0708",
+      "0812",
+      "0902",
+      "0904",
+      "0907",
+      "0912",
+      "0901",
+    ],
+    Glo: ["0805", "0807", "0705", "0811", "0815", "0905", "0915"],
     nineMobile: ["0809", "0817", "0818", "0908", "0909"],
   };
 

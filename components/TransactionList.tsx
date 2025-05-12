@@ -7,6 +7,8 @@ import AppText from "./AppText";
 import { ThemeContext } from "@/context/ThemeContext";
 import { iconMap } from "@/helpers/networkIcnMap";
 import { formatDateTime } from "@/helpers/common";
+import { useRoute } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 // Define the props for the TransactionList component
 type Props = {
@@ -50,6 +52,7 @@ const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
   // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
   const { amount, date, type, meta } = transaction;
+  const router = useRouter();
   let network = (
     (meta as Record<string, any>)?.network as string
   )?.toLowerCase();
@@ -64,10 +67,17 @@ const TransactionListItem = ({ transaction }: TransactionListItemProps) => {
       ? "fund"
       : "electricity";
 
-  console.log(network, icon, type);
   return (
     // Pressable item for each transaction
     <Pressable
+      onPress={() => {
+        router.push({
+          pathname: "/home/receipt",
+          params: {
+            data: JSON.stringify(transaction),
+          },
+        });
+      }}
       style={[styles.listItem, { backgroundColor: colorScheme.secondary }]}
     >
       {/* Display transaction icon */}

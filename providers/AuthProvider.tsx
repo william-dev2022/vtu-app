@@ -49,13 +49,13 @@ export default function AuthProvider({
       console.log("Loading Token");
       try {
         const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
-        tokenRef.current = storedToken ?? "";
 
         if (!storedToken) {
           setIsLoading(false);
           setUser(null);
           return;
         }
+        tokenRef.current = storedToken;
 
         // Try to validate the token and fetch user
         const response = await axios.get(`${API_URL}/user`, {

@@ -28,7 +28,8 @@ export type Transaction = {
   icon: string;
   status: string;
   description: string;
-  meta: { meta: { [key: string]: any } };
+  reference: string;
+  meta: { [key: string]: any };
 };
 
 export type Service = {
@@ -42,6 +43,8 @@ export type Service = {
 
 export type DataPlan = {
   id: string;
+  planId: string;
+  subcategoryId: string;
   planId: string;
   category: string;
   network: string;
@@ -60,10 +63,14 @@ export type CablePlan = {
   description: string;
   status: string;
 };
+export type ExamPlan = Omit<CablePlan>;
 
 export type GroupedPlanType = {
   [key: string]: DataPlan[];
 };
 export type GroupedCableType = {
   [key: string]: CablePlan[];
+};
+export type GroupedExamPlanType = {
+  [key: string]: ExamPlan[];
 };

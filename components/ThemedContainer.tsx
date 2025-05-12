@@ -10,7 +10,7 @@ export default function ThemedContainer({
   children: React.ReactNode;
   style?: ViewStyle;
 }) {
-  const { currentTheme } = useContext(ThemeContext);
+  const { colorScheme, currentTheme } = useContext(ThemeContext);
   const { width, height } = Dimensions.get("window");
   const isDark = currentTheme === "dark";
 
@@ -19,7 +19,7 @@ export default function ThemedContainer({
       style={[
         {
           flex: 1,
-          backgroundColor: isDark ? "#000" : "#fff",
+          backgroundColor: isDark ? "#000" : colorScheme.background,
           paddingHorizontal: width * 0.04,
           paddingBottom: 10,
         },

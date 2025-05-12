@@ -80,21 +80,31 @@ const Header = () => {
               width: 40,
               height: 40,
               borderRadius: 25,
-              backgroundColor: "gray",
+              backgroundColor: colorScheme.background,
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Ionicons name="person-circle-outline" size={40} color="white" />
+            <Ionicons
+              name="person-circle-outline"
+              size={40}
+              color={colorScheme.icon}
+            />
           </View>
 
           <AppText>
-            Welcome, <AppText bold>{user ? user.name : "Alex"}</AppText>
+            {/* Welcome,{" "} */}
+            <AppText bold style={{ fontSize: 15 }}>
+              {user
+                ? user.name.substring(0, 1).toUpperCase() +
+                  user.name.substring(1).toLowerCase()
+                : "Alex"}
+            </AppText>
           </AppText>
         </View>
 
         <View>
-          <Ionicons name="notifications" size={18} color="white" />
+          <Ionicons name="notifications" size={18} color={colorScheme.icon} />
         </View>
       </View>
 
@@ -118,10 +128,10 @@ const Header = () => {
             }}
           >
             <AppText style={{ fontSize: 24 }}>
-              ₦{balance != null && balance >= 0 ? formatAmount(balance) : "∗∗∗"}
+              {balance != null && balance >= 0 ? formatAmount(balance) : "∗∗∗"}
             </AppText>
             <Pressable>
-              <Eye size={18} color="white" />
+              <Eye size={18} color={colorScheme.icon} />
             </Pressable>
           </View>
         </View>
@@ -139,7 +149,7 @@ const Header = () => {
             borderRadius: 10,
           }}
         >
-          <CirclePlus size={16} color="white" />
+          <CirclePlus size={16} color={colorScheme.icon} />
           <AppText>Fund Wallet</AppText>
         </Pressable>
       </View>

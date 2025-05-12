@@ -53,7 +53,10 @@ export default function CompleteTransaction({
             alignItems: "center",
             borderRadius: 5,
           }}
-          onPress={() => handlePinSubmit(pin)}
+          onPress={() => {
+            handlePinSubmit(pin);
+            setPin("");
+          }}
         >
           <AppText style={{ fontSize: 18, color: "white" }}>Submit</AppText>
         </Pressable>

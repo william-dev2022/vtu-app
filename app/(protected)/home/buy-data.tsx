@@ -12,7 +12,6 @@ import {
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
-import { previousTransactions as previousAirtimeTransactions } from "@/data/sample";
 import { Image } from "expo-image";
 import { iconMap } from "@/helpers/networkIcnMap";
 import { Contact } from "lucide-react-native";
@@ -23,16 +22,18 @@ import { useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 import axios from "axios";
-import { API_URL } from "@/constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL, USERI_TOKEN_KEY } from "@/constants";
 import { DataPlan, GroupedPlanType } from "@/type";
-import { determineNetwork, wp } from "@/helpers/common";
+import { determineNetwork, formatAmount, wp } from "@/helpers/common";
 import RecentSubcriptionNumbers from "@/components/RecentSubcriptionNumbers";
 import {
+  addRecentAirtimeSubcriptionNumber,
   getRecentAirtimeSubcriptionNumbers,
   RECENT_AIRTIME_NUMBERS_TYPE,
 } from "@/api/localStorage";
 import { useAppData } from "@/providers/AppDataProvider";
+import { brandColor } from "@/constants/Colors";
+import { getStorageItemAsync } from "@/helpers/secureStorage";
 
 // Utility function to parse amount input
 const parseAmount = (value: string): number | null => {
@@ -45,9 +46,9 @@ export default function BuyData() {
   const { width } = Dimensions.get("window");
   // Access theme context for color scheme
   const { colorScheme } = useContext(ThemeContext);
-  const { balance } = useAppData();
 
   const toast = useToast();
+  const router = useRouter();
 
   // State variables for user input and selected plan menu
   const [plans, setPlans] = useState<GroupedPlanType | null>(null);
@@ -63,6 +64,7 @@ export default function BuyData() {
   >([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { addTransaction, balance } = useAppData();
 
   const loadRecentNumbers = async () => {
     try {
@@ -147,7 +149,70 @@ export default function BuyData() {
       return;
     }
 
-    // setIsLoading(false);
+    try {
+      const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
+      const phone = "+234" + phoneNumber.slice(1);
+      const response = await axios.post(
+        `${API_URL}/buy-data`,
+        {
+          phone_number: phone,
+          pin: "4444",
+          plan_id: "GTHDGT",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
+      );
+
+      if (response.status != 200) {
+        throw new Error("Invalid server response");
+      }
+
+      const { transaction } = response.data;
+
+      addTransaction(transaction);
+      addRecentAirtimeSubcriptionNumber(phoneNumber);
+      setRecentNumbers((prev) => {
+        const newRecentNumbers = [
+          { number: phoneNumber, network: currentNetwork },
+          ...prev,
+        ];
+        if (newRecentNumbers.length > 5) {
+          newRecentNumbers.slice(0, 5); // Remove the oldest number
+        }
+        return newRecentNumbers;
+      });
+      toast.show("Request successfull", { type: "success" });
+      router.push({
+        pathname: "/home/receipt",
+        params: {
+          data: JSON.stringify(transaction),
+        },
+      });
+    } catch (error: any) {
+      console.log(error);
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 422 && data?.message) {
+          toast.show(data?.message, { type: "danger" });
+        } else {
+          toast.show("An unexpected error occurred. Please try again later.", {
+            type: "danger",
+          });
+        }
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.show("Network error. Please check your connection.", {
+          type: "danger",
+        });
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleConfirmation = () => {
@@ -220,250 +285,239 @@ export default function BuyData() {
   return (
     // Themed container for consistent styling
     <ThemedContainer style={{ paddingHorizontal: 0 }}>
-      {/* Section for displaying previous transactions */}
-      <RecentSubcriptionNumbers
-        onSelect={(number) => {
-          handlePhoneNumberChange(number);
-        }}
-        recentNumbers={recentNumbers}
-      />
-      {/* Section for user input and data plans */}
-      <View
-        style={{
-          padding: 20,
-          marginTop: 20,
-          minHeight: 40,
-          backgroundColor: colorScheme.secondary,
-          borderRadius: 10,
-          marginHorizontal: 10,
-        }}
-      >
-        {/* Display user balance */}
-        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Balance: ₦535
-        </AppText>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Section for displaying previous transactions */}
+        <RecentSubcriptionNumbers
+          onSelect={(number) => {
+            handlePhoneNumberChange(number);
+          }}
+          recentNumbers={recentNumbers}
+        />
+        {/* Section for user input and data plans */}
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            columnGap: 10,
-            borderBottomWidth: 0.3,
-            borderColor: "#e4e4e7",
+            padding: 20,
             marginTop: 20,
+            minHeight: 40,
+            backgroundColor: colorScheme.secondary,
+            borderRadius: 10,
+            marginHorizontal: 10,
           }}
         >
-          {/* Display selected network icon */}
-          <Image
-            source={iconMap[currentNetwork ?? ""]}
-            contentFit="cover"
-            style={{ width: 25, height: 25, borderRadius: 10 }}
-          />
-          {/* Input field for phone number */}
-          <TextInput
-            style={{
-              flex: 1,
-              minHeight: 40,
-              color: "rgb(190, 187, 187)",
-              fontSize: 18,
-              fontFamily: "Krub_400Regular",
-            }}
-            value={phoneNumber}
-            onChangeText={handlePhoneNumberChange}
-            placeholderTextColor="rgb(105, 104, 104)"
-            placeholder="09375436636"
-            keyboardType="phone-pad"
-          />
-
-          {/* Button to open contact list */}
-          <Pressable>
-            <Contact color="white" size={20} />
-          </Pressable>
-        </View>
-
-        {/* Data Plans */}
-        <View style={{ marginTop: 30 }}>
-          <View
-            style={{
-              justifyContent: "center",
-              flexDirection: "row",
-              marginBottom: 20,
-            }}
+          {/* Display user balance */}
+          <AppText
+            style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}
           >
-            {/* Tabs for selecting data plan categories */}
-            {["daily", "weekly", "monthly"].map((validity, index) => (
-              <Pressable
-                onPress={() => setCurrentPlanMenu(validity)}
-                style={{
-                  paddingHorizontal: wp(4),
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                key={validity}
-              >
-                <AppText
-                  style={{
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {validity}
-                </AppText>
-
-                <View
-                  style={{
-                    width: 4,
-                    height: 4,
-                    backgroundColor:
-                      currentPlanMenu == validity ? "#0f766e" : "transparent",
-                    borderRadius: 2,
-                  }}
-                />
-              </Pressable>
-            ))}
-          </View>
+            Balance: {formatAmount(balance)}
+          </AppText>
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
-              flexWrap: "wrap",
-              columnGap: 4,
-              rowGap: 10,
-              marginTop: 10,
+              columnGap: 10,
+              borderBottomWidth: 0.3,
+              borderColor: "#e4e4e7",
+              marginTop: 20,
             }}
           >
-            {/* Display available data plans */}
-            {plans &&
-              plans[
-                currentNetwork == "ninemobile" ? "9mobile" : currentNetwork
-              ]?.map((plan, index) => {
-                if (plan.category !== currentPlanMenu) {
-                  return null; // Skip plans that don't match the selected validity
-                }
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={{
-                      alignItems: "center",
-                      width: width * 0.27,
-                      padding: 10,
-                      backgroundColor: colorScheme.background,
-                      borderRadius: 10,
-                      justifyContent: "center",
-                      rowGap: 5,
-                    }}
-                    // onPress={showBottomSheet}
-                    onPress={() => setSelectedPlan(plan)}
-                  >
-                    <AppText style={{ fontSize: 16, textAlign: "center" }}>
-                      {/* {plan.name} */}
-                      {plan.name.split(" ")[0]}
-                    </AppText>
-                    {/* <AppText style={{ fontSize: 12 }}>{plan.planId}</AppText> */}
-                    <AppText style={{ fontSize: 12 }}>{plan.validity}</AppText>
-                    <AppText style={{ fontSize: 12 }}>₦{plan.price}</AppText>
-                  </TouchableOpacity>
-                );
-              })}
-          </View>
-        </View>
-      </View>
-
-      {/* submit */}
-      <View
-        style={{
-          padding: 20,
-          marginTop: 20,
-          minHeight: 40,
-          backgroundColor: colorScheme.secondary,
-          borderRadius: 10,
-          marginHorizontal: 10,
-        }}
-      >
-        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Amount: ₦{selectedPlan ? selectedPlan.price : "0"}
-        </AppText>
-
-        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Plan: {selectedPlan ? selectedPlan.name : "0"}
-        </AppText>
-
-        <AppText style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}>
-          Duration: {selectedPlan ? selectedPlan.validity : "0"}
-        </AppText>
-
-        <Pressable
-          onPress={handleConfirmation}
-          style={{
-            padding: 10,
-            backgroundColor: "#065f46",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 5,
-          }}
-        >
-          <AppText style={{ fontSize: 18, color: "white" }}>Pay</AppText>
-        </Pressable>
-      </View>
-      <AppLoadingIndicator isLoading={isLoading} />
-      <CompleteTransaction
-        bottomSheetModalRef={bottomSheetModalRef}
-        hideBottomSheet={hideBottomSheet}
-        handlePinSubmit={submitRequest}
-      />
-    </ThemedContainer>
-  );
-}
-
-function previousNumbers(
-  colorScheme: {
-    text: string;
-    background: string;
-    tint: string;
-    tabIconDefault: string;
-    tabIconSelected: string;
-    icon: string;
-    secondary: string;
-    switchTrackTrue: string;
-    switchTrackFalse: string;
-    tabBarInactiveTintColor: string;
-    tabBarActiveTintColor: string;
-  },
-  handlePhoneNumberChange: (phoneNumber: string) => void
-) {
-  return (
-    <View style={{ backgroundColor: colorScheme.secondary }}>
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        style={{ paddingTop: 20 }}
-      >
-        {previousAirtimeTransactions.map((transaction) => (
-          <Pressable
-            onPress={() => handlePhoneNumberChange(transaction.number)}
-            key={transaction.id}
-            style={{
-              alignItems: "center",
-              padding: 10,
-            }}
-          >
-            {/* Display network icon */}
+            {/* Display selected network icon */}
             <Image
-              source={iconMap[transaction.network]}
+              source={iconMap[currentNetwork ?? ""]}
               contentFit="cover"
-              style={{ width: 30, height: 30, borderRadius: 10 }}
+              style={{ width: 25, height: 25, borderRadius: 10 }}
             />
-            {/* Display transaction number */}
-            <AppText
+            {/* Input field for phone number */}
+            <TextInput
               style={{
-                fontSize: 12,
-                fontFamily: "Poppins_400Regular",
-                marginTop: 4,
+                flex: 1,
+                minHeight: 40,
+                color: "rgb(190, 187, 187)",
+                fontSize: 18,
+                fontFamily: "Krub_400Regular",
+              }}
+              value={phoneNumber}
+              onChangeText={handlePhoneNumberChange}
+              placeholderTextColor="rgb(105, 104, 104)"
+              placeholder="09375436636"
+              keyboardType="phone-pad"
+            />
+
+            {/* Button to open contact list */}
+            <Pressable>
+              <Contact color="white" size={20} />
+            </Pressable>
+          </View>
+
+          {/* Data Plans */}
+          <View style={{ marginTop: 30 }}>
+            <View
+              style={{
+                justifyContent: "center",
+                flexDirection: "row",
+                marginBottom: 20,
               }}
             >
-              {transaction.number}
-            </AppText>
+              {/* Tabs for selecting data plan categories */}
+              {["daily", "weekly", "monthly"].map((validity, index) => (
+                <Pressable
+                  onPress={() => setCurrentPlanMenu(validity)}
+                  style={{
+                    paddingHorizontal: wp(4),
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  key={validity}
+                >
+                  <AppText
+                    style={{
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {validity}
+                  </AppText>
+
+                  <View
+                    style={{
+                      width: 4,
+                      height: 4,
+                      backgroundColor:
+                        currentPlanMenu == validity ? "#0f766e" : "transparent",
+                      borderRadius: 2,
+                    }}
+                  />
+                </Pressable>
+              ))}
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "stretch",
+                flexWrap: "wrap",
+                columnGap: 10,
+                rowGap: 15,
+                marginTop: 10,
+              }}
+            >
+              {/* Display available data plans */}
+              {plans &&
+                plans[
+                  currentNetwork == "ninemobile" ? "9mobile" : currentNetwork
+                ]?.map((plan, index) => {
+                  if (plan.category !== currentPlanMenu) {
+                    return null; // Skip plans that don't match the selected validity
+                  }
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={{
+                        alignItems: "center",
+                        width: width * 0.25,
+                        padding: 10,
+                        backgroundColor:
+                          selectedPlan?.planId === plan.planId
+                            ? brandColor
+                            : colorScheme.background,
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        rowGap: 5,
+                      }}
+                      // onPress={showBottomSheet}
+                      onPress={() => setSelectedPlan(plan)}
+                    >
+                      <AppText
+                        bold
+                        style={{
+                          fontSize: 14,
+                          textAlign: "center",
+                          color:
+                            selectedPlan?.planId === plan.planId
+                              ? "white"
+                              : colorScheme.text,
+                        }}
+                      >
+                        {plan.name}
+                        {/* {plan.name.split(" ")[0]} */}
+                      </AppText>
+                      {/* <AppText style={{ fontSize: 12 }}>{plan.planId}</AppText> */}
+                      <AppText
+                        style={{
+                          fontSize: 12,
+                          color:
+                            selectedPlan?.planId === plan.planId
+                              ? "white"
+                              : colorScheme.text,
+                        }}
+                      >
+                        {plan.validity}
+                      </AppText>
+                      <AppText
+                        style={{
+                          fontSize: 12,
+                          color:
+                            selectedPlan?.planId === plan.planId
+                              ? "white"
+                              : colorScheme.text,
+                        }}
+                      >
+                        {/* ₦{plan.price} */}
+                        {formatAmount(plan.price)}
+                      </AppText>
+                    </TouchableOpacity>
+                  );
+                })}
+            </View>
+          </View>
+        </View>
+
+        {/* submit */}
+        <View
+          style={{
+            padding: 20,
+            marginTop: 20,
+            minHeight: 40,
+            backgroundColor: colorScheme.secondary,
+            borderRadius: 10,
+            marginHorizontal: 10,
+          }}
+        >
+          <AppText
+            style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}
+          >
+            Amount: ₦{selectedPlan ? selectedPlan.price : "0"}
+          </AppText>
+
+          <AppText
+            style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}
+          >
+            Plan: {selectedPlan ? selectedPlan.name : "0"}
+          </AppText>
+
+          <AppText
+            style={{ fontSize: 16, color: "#a1a1aa", textAlign: "right" }}
+          >
+            Duration: {selectedPlan ? selectedPlan.validity : "0"}
+          </AppText>
+
+          <Pressable
+            onPress={handleConfirmation}
+            style={{
+              padding: 10,
+              backgroundColor: "#065f46",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 5,
+            }}
+          >
+            <AppText style={{ fontSize: 18, color: "white" }}>Pay</AppText>
           </Pressable>
-        ))}
+        </View>
+        <AppLoadingIndicator isLoading={isLoading} />
+        <CompleteTransaction
+          bottomSheetModalRef={bottomSheetModalRef}
+          hideBottomSheet={hideBottomSheet}
+          handlePinSubmit={submitRequest}
+        />
       </ScrollView>
-    </View>
+    </ThemedContainer>
   );
 }

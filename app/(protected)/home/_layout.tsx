@@ -42,6 +42,7 @@ export default function _layout() {
     headerShown: true,
     navigationBarHidden: true,
     title,
+
     headerBackVisible: false,
     headerStyle: {
       backgroundColor: colorScheme.background,
@@ -74,7 +75,10 @@ export default function _layout() {
             name="buy-airtime"
             options={screenOptions("Buy Airtime")}
           />
-          <Stack.Screen name="buy-data" options={screenOptions("Buy Data")} />
+          <Stack.Screen
+            name="buy-data"
+            options={{ ...screenOptions("Buy Data") }}
+          />
           <Stack.Screen
             name="profile-details"
             options={{
@@ -87,9 +91,27 @@ export default function _layout() {
             options={screenOptions("Fund Wallet", false)}
           />
           <Stack.Screen
-            name="complete-transaction"
+            name="cable-subscription"
+            options={{
+              headerShown: false, // Optional: Hides the header for a cleaner modal look
+            }}
+          />
+          <Stack.Screen
+            name="exam-pin"
+            options={{
+              headerShown: false, // Optional: Hides the header for a cleaner modal look
+            }}
+          />
+          <Stack.Screen
+            name="receipt"
             options={{
               presentation: "containedTransparentModal", // Makes the screen appear as a modal
+              headerShown: false, // Optional: Hides the header for a cleaner modal look
+            }}
+          />
+          <Stack.Screen
+            name="complete-transaction"
+            options={{
               headerShown: false, // Optional: Hides the header for a cleaner modal look
             }}
           />

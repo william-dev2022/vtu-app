@@ -50,7 +50,12 @@ export default function TabLayout() {
               {...props}
               android_ripple={null}
               style={({ pressed }) => [
-                { opacity: 1, justifyContent: "center", alignItems: "center" },
+                {
+                  opacity: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 10,
+                },
               ]}
             >
               {props.children}
