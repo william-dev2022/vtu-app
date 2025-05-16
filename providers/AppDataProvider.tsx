@@ -81,6 +81,7 @@ const AppDataProvider = ({ children }: { children: React.ReactNode }) => {
       _setBalance(balance);
       _setServices(services);
 
+      console.log(services);
       // // Save to AsyncStorage
       // await Promise.all([
       //   AsyncStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions)),

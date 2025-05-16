@@ -1,14 +1,11 @@
 import React, { useContext } from "react";
 import { FontAwesome, Ionicons, Feather } from "@expo/vector-icons";
 import { ReceiptText } from "lucide-react-native";
-import { Link, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { Pressable, View } from "react-native";
 
-import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { ThemeContext } from "@/context/ThemeContext";
-import AppText from "@/components/AppText";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {

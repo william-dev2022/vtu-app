@@ -16,7 +16,7 @@ export default function TransactionCodeInputPad({ pin, setPin }: Props) {
 
   return (
     <View style={styles.container}>
-      {numbers.map((_, index) => (
+      {numbers.map((number, index) => (
         <Pressable
           key={index}
           style={{
@@ -25,12 +25,12 @@ export default function TransactionCodeInputPad({ pin, setPin }: Props) {
           }}
           onPress={() => {
             if (pin.length < 4) {
-              setPin((prev) => prev + index.toString());
+              setPin((prev) => prev + number.toString());
             }
           }}
         >
           <AppText bold style={{ fontSize: 18 }}>
-            {index}
+            {number}
           </AppText>
         </Pressable>
       ))}

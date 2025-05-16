@@ -6,6 +6,7 @@ import Colors from "@/constants/Colors";
 // Define a type that extends the default TextProps with any additional custom props
 interface CustomTextProps extends TextProps {
   bold?: boolean;
+  size?: number;
 }
 
 const styles = StyleSheet.create({

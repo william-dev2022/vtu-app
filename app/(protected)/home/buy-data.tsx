@@ -149,15 +149,24 @@ export default function BuyData() {
       return;
     }
 
+    console.log("Selected plan:", selectedPlan);
+
     try {
+      if (!selectedPlan) {
+        toast.show("Please select a plan", { type: "danger" });
+        throw new Error("No plan selected");
+      }
+
       const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
-      const phone = "+234" + phoneNumber.slice(1);
+      // const phone = "+234" + phoneNumber.slice(1);
+      const phone = phoneNumber;
       const response = await axios.post(
         `${API_URL}/buy-data`,
         {
           phone_number: phone,
-          pin: "4444",
-          plan_id: "GTHDGT",
+          pin: pin,
+          plan_id: selectedPlan.id,
+          network: currentNetwork,
         },
         {
           headers: {
@@ -237,11 +246,6 @@ export default function BuyData() {
       });
       return;
     }
-
-    // const response = axios.post(`${API_URL}/buy-data`, {
-    //   phoneNumber,
-    //   planId: "500MBSME",
-    // });
 
     // Proceed with transaction logic
     showBottomSheet();

@@ -134,10 +134,10 @@ export default function BuyAirtime() {
     }
     hideBottomSheet();
     setIsLoading(true);
-
+    console.log("Submitting request with pin:", pin);
     try {
       const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
-      const phone = phoneNumber.slice(1);
+      const phone = phoneNumber;
       // const phone = "+234" + phoneNumber.slice(1);
       const response = await axios.post(
         `${API_URL}/buy-airtime`,
@@ -180,7 +180,11 @@ export default function BuyAirtime() {
       console.error(error);
       if (error.response) {
         const { status, data } = error.response;
-        if (status === 422 && data?.message) {
+        if (status == 400) {
+          toast.show(data?.message, {
+            type: "danger",
+          });
+        } else if (status === 422 && data?.message) {
           toast.show(data?.message, { type: "danger" });
         } else {
           console.log(data);

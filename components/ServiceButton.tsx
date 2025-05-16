@@ -7,6 +7,9 @@ import Colors from "@/constants/Colors";
 import { Service } from "@/type";
 import { Ionicons } from "@expo/vector-icons";
 
+const windowWidth = Dimensions.get("window").width;
+const itemWidth = windowWidth / 4.9;
+
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
@@ -14,11 +17,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
+    width: itemWidth,
     minWidth: Dimensions.get("window").width / 5,
+    // maxWidth: "20%",
   },
 });
 
-export const ServiceButton = ({ name }: Service) => {
+export const ServiceButton = ({ name, status }: Service) => {
   const { currentTheme } = useContext(ThemeContext);
   const router = useRouter();
 
@@ -33,6 +38,12 @@ export const ServiceButton = ({ name }: Service) => {
       <Ionicons name="book-outline" size={16} color={colorScheme.icon} />
     ) : serviceName == "cable bill" ? (
       <Ionicons name="tv-outline" size={16} color={colorScheme.icon} />
+    ) : serviceName == "betting" ? (
+      <Ionicons
+        name="game-controller-outline"
+        size={16}
+        color={colorScheme.icon}
+      />
     ) : (
       <Ionicons
         name="ellipsis-vertical-circle-outline"
@@ -48,6 +59,8 @@ export const ServiceButton = ({ name }: Service) => {
       ? "/home/buy-data"
       : serviceName == "exam pin"
       ? "/home/exam-pin"
+      : serviceName == "betting"
+      ? "/"
       : "/home/cable-subscription";
 
   const handlePress = () => {
@@ -64,11 +77,18 @@ export const ServiceButton = ({ name }: Service) => {
 
   return (
     <Pressable
+      disabled={status !== "active"}
       onPress={handlePress}
-      style={[styles.button, { backgroundColor: colorScheme.secondary }]}
+      style={[
+        styles.button,
+        {
+          backgroundColor: colorScheme.secondary,
+          opacity: status !== "active" ? 0.5 : 1,
+        },
+      ]}
     >
       {icon}
-      <AppText>{name}</AppText>
+      <AppText style={{ fontSize: 12, textAlign: "center" }}>{name}</AppText>
     </Pressable>
   );
 };

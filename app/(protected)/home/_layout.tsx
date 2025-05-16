@@ -7,6 +7,7 @@ import { ChevronLeft } from "lucide-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as SystemUI from "expo-system-ui";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 export default function _layout() {
   const { colorScheme } = useContext(ThemeContext);
@@ -99,14 +100,39 @@ export default function _layout() {
           <Stack.Screen
             name="exam-pin"
             options={{
-              headerShown: false, // Optional: Hides the header for a cleaner modal look
+              headerShown: true, // Optional: Hides the header for a cleaner modal look
+            }}
+          />
+          <Stack.Screen
+            name="pin-reset"
+            options={{
+              ...screenOptions("Set Pin", false),
+              title: "",
             }}
           />
           <Stack.Screen
             name="receipt"
             options={{
-              presentation: "containedTransparentModal", // Makes the screen appear as a modal
-              headerShown: false, // Optional: Hides the header for a cleaner modal look
+              headerShown: true, // Optional: Hides the header for a cleaner modal look
+              headerStyle: { backgroundColor: colorScheme.background },
+              headerBackVisible: false,
+              headerTitle: "",
+              headerRight(props) {
+                return (
+                  <Pressable
+                    onPress={() => router.push("/(protected)/(tabs)")}
+                    style={{
+                      marginRight: 15,
+                      backgroundColor: colorScheme.secondary,
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Feather name="x" size={18} color={colorScheme.text} />
+                  </Pressable>
+                );
+              },
             }}
           />
           <Stack.Screen
