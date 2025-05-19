@@ -27,6 +27,10 @@ export default function _layout() {
           name="home"
           options={{ headerShown: false, navigationBarHidden: true }}
         />
+        <Stack.Screen
+          name="payment"
+          options={{ headerShown: false, navigationBarHidden: true }}
+        />
       </Stack>
     </AppDataProvider>
   );

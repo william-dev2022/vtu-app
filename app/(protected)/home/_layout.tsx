@@ -110,6 +110,12 @@ export default function _layout() {
               title: "",
             }}
           />
+          {/* <Stack.Screen
+            name="manual-payment"
+            options={{
+              headerShown: false,
+            }}
+          /> */}
           <Stack.Screen
             name="receipt"
             options={{
