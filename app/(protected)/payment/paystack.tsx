@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput, Pressable } from "react-native";
+import { View, StyleSheet, TextInput, Pressable, Keyboard } from "react-native";
 import React, { useEffect, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
@@ -12,19 +12,115 @@ import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 import { useToast } from "react-native-toast-notifications";
 import { useRouter } from "expo-router";
 import { getStorageItemAsync } from "@/helpers/secureStorage";
+import { usePaystack } from "react-native-paystack-webview";
+import useAuth from "@/context/AuthContext";
+import { useAppData } from "@/providers/AppDataProvider";
+import { Transaction } from "@/type";
 
 export default function ManualTransfer() {
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<number | null>(null);
 
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const { colorScheme } = useTheme();
+  const { refreshBalance, addTransaction } = useAppData();
 
   const router = useRouter();
   const toast = useToast();
 
+  const { popup } = usePaystack();
+
+  const payNow = async (amount: number) => {
+    Keyboard.dismiss();
+    setIsLoading(true);
+    const userToken = await getStorageItemAsync(USERI_TOKEN_KEY);
+    if (!userToken) {
+      //rediect user to login
+      setIsLoading(false);
+      return;
+    }
+    try {
+      popup.checkout({
+        email: "de@gmail.com",
+        amount: amount,
+        // reference: "TXN_123456",
+        metadata: {
+          custom_fields: [
+            {
+              display_name: user!.name,
+              phone_number: user!.phoneNumber,
+              id: user!.id,
+            },
+          ],
+        },
+
+        onSuccess: async (res) => {
+          setIsLoading(true);
+          const { reference, status: statusCode } = res;
+          if (statusCode !== "success") {
+            toast.show("Payment Failed", {
+              type: "danger",
+            });
+            return;
+          }
+
+          // You can send the reference to your server for verification
+          const response = await axios.post(
+            `${API_URL}/payment/verify`,
+            { reference },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userToken}`,
+              },
+              timeout: 10000, // 10 seconds timeout
+            }
+          );
+
+          const { status, data } = response.data as {
+            status: number;
+            data: Transaction;
+          };
+
+          if (status && data) {
+            addTransaction(data);
+            await refreshBalance();
+
+            toast.show("Payment Successful", {
+              type: "success",
+            });
+
+            router.push({
+              pathname: "/home/receipt",
+              params: {
+                data: JSON.stringify(data),
+              },
+            });
+          }
+          setIsLoading(false);
+        },
+        onCancel: () => {
+          console.log("Payment Cancelled");
+          toast.show("Payment Cancelled", {
+            type: "danger",
+          });
+        },
+
+        onError: (err) => {
+          console.log("Payment Error:", err);
+          toast.show("Payment Error", {
+            type: "danger",
+          });
+        },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (amount) {
+    if (amount && amount >= 1000) {
       setCanSubmit(true);
     } else {
       setCanSubmit(false);
@@ -32,70 +128,8 @@ export default function ManualTransfer() {
   }, [amount]);
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-
-    return;
-
-    try {
-      const userToken = await getStorageItemAsync(USERI_TOKEN_KEY);
-      if (!userToken) {
-        console.error("User token not found");
-        toast.show("User token not found", {
-          type: "danger",
-        });
-        setIsLoading(false);
-        return;
-      }
-      const response = await axios.post(
-        `${API_URL}/account/set-pin`,
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        // Handle success
-        toast.show("Pin set successfully", {
-          type: "success",
-        });
-        setAmount("");
-        router.replace("/(protected)/(tabs)/profile");
-        return;
-      } else {
-        // Handle error
-        console.error("Error setting pin");
-      }
-    } catch (error: any) {
-      //   console.error(error);
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 401) {
-          toast.show("Invalid Password", {
-            type: "danger",
-          });
-        } else if (status === 422 && data?.message) {
-          toast.show(data?.message, { type: "danger" });
-        } else {
-          console.log(data);
-          toast.show("An unexpected error occurred. Please try again later.", {
-            type: "danger",
-          });
-        }
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-        toast.show("Network error. Please check your connection.", {
-          type: "danger",
-        });
-      } else {
-        console.error("Error setting up request:", error.message);
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    if (!amount) return;
+    payNow(amount);
   };
 
   return (
@@ -110,11 +144,7 @@ export default function ManualTransfer() {
     >
       <AppText bold></AppText>
       <AppText style={{ fontSize: hp(1.8) }}>
-        Minimum funding is {formatAmount(4000)}. Kindly pay into this account{" "}
-        <AppText bold style={{ color: "red" }}>
-          0762974174 PluginLinkNg Gtbank
-        </AppText>{" "}
-        Don't submit more than once to aviod your wallet not been funded
+        Minimum funding is {formatAmount(1000)}.
       </AppText>
 
       <View style={{ flex: 1, marginTop: 20, rowGap: 20 }}>
@@ -122,10 +152,17 @@ export default function ManualTransfer() {
           placeholder="Amount"
           placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.8)}
           keyboardType="phone-pad"
-          onChangeText={setAmount}
+          onChangeText={(value) => {
+            const parsedValue = parseInt(value);
+            if (!isNaN(parsedValue)) {
+              setAmount(parsedValue);
+            } else {
+              setAmount(0);
+            }
+          }}
           maxLength={5}
           secureTextEntry
-          value={amount}
+          value={amount?.toString()}
           style={{
             ...styles.dropdown,
             backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.8),

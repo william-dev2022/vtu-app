@@ -29,7 +29,7 @@ export type Transaction = {
   status: string;
   description: string;
   reference: string;
-  meta: { [key: string]: any };
+  meta: { [key: string]: string };
 };
 
 export type Service = {

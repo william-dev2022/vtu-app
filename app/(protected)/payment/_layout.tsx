@@ -5,6 +5,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import AppText from "@/components/AppText";
 import { ChevronLeft } from "lucide-react-native";
 import * as SystemUI from "expo-system-ui";
+import { PaystackProvider } from "react-native-paystack-webview";
 
 export default function _layout() {
   const { colorScheme } = useContext(ThemeContext);
@@ -61,21 +62,26 @@ export default function _layout() {
   });
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="manual-payment"
-        options={{
-          ...screenOptions("Make Manual Payment", false),
-          title: "Make Manual Payment",
-        }}
-      />
-      <Stack.Screen
-        name="paystack"
-        options={{
-          ...screenOptions("Make  Payment", false),
-          title: "Paystack  Payment",
-        }}
-      />
-    </Stack>
+    <PaystackProvider
+      publicKey={"pk_test_8cc17556f8799a7759dab42f70e7a725fa0e5e27"}
+      defaultChannels={["card", "bank", "bank_transfer"]} // Default channels to show
+    >
+      <Stack>
+        <Stack.Screen
+          name="manual-payment"
+          options={{
+            ...screenOptions("Make Manual Payment", false),
+            title: "Make Manual Payment",
+          }}
+        />
+        <Stack.Screen
+          name="paystack"
+          options={{
+            ...screenOptions("Make  Payment", false),
+            title: "Paystack  Payment",
+          }}
+        />
+      </Stack>
+    </PaystackProvider>
   );
 }

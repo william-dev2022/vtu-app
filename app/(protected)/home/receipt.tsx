@@ -45,7 +45,9 @@ export default function Receipt() {
         <AppText bold style={{ fontSize: 24 }}>
           Transaction Details
         </AppText>
-        <AppText bold>{transaction.type} PURCHASE</AppText>
+        <AppText bold>
+          {transaction.type} {transaction.type == "DEPOSIT" ? "" : "PURCHASE"}
+        </AppText>
         <AppText bold style={{ fontSize: 24 }}>
           ₦{transaction.amount}.00
         </AppText>
@@ -88,6 +90,12 @@ export default function Receipt() {
         )}
         {transaction.meta?.network && (
           <ReceiptItem title="Network" value={transaction.meta.network} />
+        )}
+        {transaction.meta?.channel && (
+          <ReceiptItem
+            title="Channel"
+            value={transaction.meta.channel.toUpperCase()}
+          />
         )}
       </View>
     </ThemedContainer>

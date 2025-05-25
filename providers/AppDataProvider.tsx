@@ -105,9 +105,10 @@ const AppDataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const refreshBalance = async () => {
+    setError(false);
     const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
     if (!storedToken) return;
-    setError(false);
+
     // Fetch balance from the server
     try {
       const response = await axios.get(`${API_URL}/account/balance`, {
@@ -120,7 +121,6 @@ const AppDataProvider = ({ children }: { children: React.ReactNode }) => {
       await AsyncStorage.setItem(BALANCE_KEY, JSON.stringify(balance));
     } catch (error) {
       console.error("Error fetching balance:", error);
-      setError(true);
     }
   };
 

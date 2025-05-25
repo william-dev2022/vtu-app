@@ -12,6 +12,7 @@ import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 import { useToast } from "react-native-toast-notifications";
 import { useRouter } from "expo-router";
 import { getStorageItemAsync } from "@/helpers/secureStorage";
+import { Transaction } from "@/type";
 
 export default function ManualTransfer() {
   const [amount, setAmount] = useState<string>("");
@@ -27,6 +28,13 @@ export default function ManualTransfer() {
   const router = useRouter();
   const toast = useToast();
 
+  const reset = () => {
+    setAccountName("");
+    setAmount("");
+    setBankName("");
+    setPaymentType("");
+  };
+
   useEffect(() => {
     if (amount && accountName && bankName && paymentType) {
       setCanSubmit(true);
@@ -38,8 +46,6 @@ export default function ManualTransfer() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    return;
-
     try {
       const userToken = await getStorageItemAsync(USERI_TOKEN_KEY);
       if (!userToken) {
@@ -47,12 +53,17 @@ export default function ManualTransfer() {
         toast.show("User token not found", {
           type: "danger",
         });
-        setIsLoading(false);
         return;
       }
       const response = await axios.post(
-        `${API_URL}/account/set-pin`,
-        {},
+        `${API_URL}/payment/manual-payment`,
+        {
+          bank_name: bankName,
+          account_number: accountNumber,
+          account_name: accountName,
+          amount: amount,
+          payment_type: paymentType,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -61,20 +72,22 @@ export default function ManualTransfer() {
         }
       );
 
-      if (response.status === 200) {
-        // Handle success
-        toast.show("Pin set successfully", {
-          type: "success",
-        });
-        setAccountName("");
-        setAmount("");
-        setBankName("");
-        setPaymentType("");
-        router.replace("/(protected)/(tabs)/profile");
-        return;
+      if (response.status == 200) {
+        const { status, data } = response.data as {
+          status: number;
+          data: Transaction;
+        };
+
+        if (status && data) {
+          toast.show("Submitted successfully", { type: "success" });
+          reset();
+          router.replace("/(protected)/(tabs)");
+          return;
+        }
       } else {
         // Handle error
         console.error("Error setting pin");
+        throw new Error("Something went wrong");
       }
     } catch (error: any) {
       //   console.error(error);
@@ -119,9 +132,13 @@ export default function ManualTransfer() {
       <AppText style={{ fontSize: hp(1.8) }}>
         Minimum funding is {formatAmount(4000)}. Kindly pay into this account{" "}
         <AppText bold style={{ color: "red" }}>
-          0762974174 PluginLinkNg Gtbank
+          0000000000 TestBank
         </AppText>{" "}
         Don't submit more than once to aviod your wallet not been funded
+      </AppText>
+
+      <AppText>
+        Note: Multiple submission could lead to account suspension
       </AppText>
 
       <View style={{ flex: 1, marginTop: 20, rowGap: 20 }}>

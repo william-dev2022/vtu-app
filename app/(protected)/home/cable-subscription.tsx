@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
-import { hp, wp } from "@/helpers/common";
+import { formatAmount, hp, wp } from "@/helpers/common";
 import { applyOpacityToColor } from "@/helpers/colorUtils";
 import { Dropdown } from "react-native-element-dropdown";
 import { useTheme } from "@/context/ThemeContext";
@@ -126,13 +126,13 @@ export default function CableSubscription() {
 
         <TextInput
           placeholder="Enter Smart Card Number"
-          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.5)}
+          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.7)}
           keyboardType="phone-pad"
           onChangeText={setNumber}
           value={number}
           style={{
             ...styles.dropdown,
-            backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.5),
+            backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.7),
             borderWidth: 0,
             padding: 10,
             color: applyOpacityToColor(colorScheme.text, 0.8),
@@ -143,10 +143,14 @@ export default function CableSubscription() {
 
         <TextInput
           placeholder="₦ 0.00"
-          value={selectedPlan?.price ?? ""}
+          value={
+            selectedPlan?.price
+              ? formatAmount(parseInt(selectedPlan?.price))
+              : ""
+          }
           readOnly
           editable={false}
-          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.5)}
+          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.7)}
           style={{
             ...styles.dropdown,
             backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.5),

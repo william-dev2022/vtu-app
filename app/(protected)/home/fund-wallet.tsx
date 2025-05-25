@@ -1,12 +1,5 @@
 // Import necessary components and libraries
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-  StyleSheet,
-  StatusBar,
-} from "react-native";
+import { View, TouchableOpacity, Pressable, StyleSheet } from "react-native";
 import React, { useContext, useState } from "react";
 import ThemedContainer from "@/components/ThemedContainer";
 import AppText from "@/components/AppText";
@@ -28,11 +21,27 @@ export default function FundWallet() {
 
       {/* <WalletDetails /> */}
 
-      <View style={{ ...styles.box, backgroundColor: colorScheme.secondary }}>
+      <View
+        style={{
+          ...styles.box,
+          backgroundColor: colorScheme.secondary,
+          opacity: true ? 0.7 : 1,
+        }}
+      >
         <AppText>
           Generate a virtual dedicated accounts, that is link your wallet.
         </AppText>
+        <AppText
+          style={{
+            fontFamily: "Krub_400Regular_Italic",
+            color: "red",
+            alignSelf: "flex-start",
+          }}
+        >
+          currently not avaliable.
+        </AppText>
         <Pressable
+          disabled
           style={{
             padding: 10,
             backgroundColor: brandColor,
