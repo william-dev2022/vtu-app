@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "vtu-app",
-    "slug": "vtu-app",
+    "name": "Jaraload",
+    "slug": "Jaraload",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -35,6 +35,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b5f41d99-68db-4e1f-86da-6cec43f0ddc3"
+      }
     }
   }
 }
