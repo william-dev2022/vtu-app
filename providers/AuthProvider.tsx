@@ -20,6 +20,7 @@ import {
 
 type AuthContextType = {
   signIn: ({ token, user }: { token: string; user: User }) => void;
+  updateUserPinStatus: () => void;
   signOut: () => void;
   token: MutableRefObject<string | null> | null;
   isLoading: boolean;
@@ -32,6 +33,7 @@ export const AuthContext = createContext<AuthContextType>({
   token: null,
   isLoading: true,
   user: null,
+  updateUserPinStatus: () => null,
 });
 
 export default function AuthProvider({
@@ -106,6 +108,14 @@ export default function AuthProvider({
     router.replace("/auth/login");
   }, []);
 
+  const updateUserPinStatus = () => {
+    setUser((prev) => {
+      if (prev) {
+        return { ...prev, hasPin: true };
+      }
+      return null;
+    });
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -114,6 +124,7 @@ export default function AuthProvider({
         token: tokenRef,
         isLoading,
         user,
+        updateUserPinStatus,
       }}
     >
       {children}

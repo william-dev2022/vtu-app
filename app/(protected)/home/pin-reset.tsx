@@ -12,6 +12,7 @@ import AppLoadingIndicator from "@/components/AppLoadingIndicator";
 import { useToast } from "react-native-toast-notifications";
 import { useRouter } from "expo-router";
 import { getStorageItemAsync } from "@/helpers/secureStorage";
+import useAuth from "@/context/AuthContext";
 
 export default function CableSubscription() {
   const [pin, setPin] = useState<string>("");
@@ -24,6 +25,7 @@ export default function CableSubscription() {
 
   const router = useRouter();
   const toast = useToast();
+  const { updateUserPinStatus } = useAuth();
 
   useEffect(() => {
     if (pin && confirmPin && password) {
@@ -86,6 +88,7 @@ export default function CableSubscription() {
         setPin("");
         setConfirmPin("");
         setPassword("");
+        updateUserPinStatus();
         router.replace("/(protected)/(tabs)/profile");
         return;
       } else {
@@ -132,7 +135,7 @@ export default function CableSubscription() {
         paddingHorizontal: wp(10),
       }}
     >
-      <AppText bold>Create a 4-Digit Transaction PIN</AppText>
+      <AppText bold>Set a 4-Digit Transaction PIN</AppText>
       <AppText style={{ fontSize: hp(1.8) }}>
         Don’t use obvious combinations like{" "}
         <AppText style={{ color: "red" }}>1234</AppText> or your birth year.
@@ -141,13 +144,13 @@ export default function CableSubscription() {
 
       <View style={{ flex: 1, marginTop: 20, rowGap: 20 }}>
         <TextInput
-          placeholder="Enter Pin"
+          placeholder="Pin"
+          value={"•".repeat(pin.length)}
           placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.8)}
           keyboardType="phone-pad"
-          onChangeText={setPin}
           maxLength={4}
-          secureTextEntry
-          value={pin}
+          secureTextEntry={true}
+          onChangeText={setPin}
           style={{
             ...styles.dropdown,
             backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.8),
@@ -158,14 +161,13 @@ export default function CableSubscription() {
             fontSize: hp(1.8),
           }}
         />
+
         <TextInput
           placeholder="Enter Pin Again"
-          value={confirmPin}
-          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.8)}
-          keyboardType="phone-pad"
-          maxLength={4}
-          secureTextEntry
+          value={"•".repeat(confirmPin.length)}
           onChangeText={setConfirmPin}
+          secureTextEntry={true}
+          placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.5)}
           style={{
             ...styles.dropdown,
             backgroundColor: applyOpacityToColor(colorScheme.secondary, 0.8),

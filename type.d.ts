@@ -11,6 +11,7 @@ export type User = {
   phoneNumber: string;
   isVerified: boolean;
   status: string;
+  hasPin: boolean;
 };
 
 export type Service = {
