@@ -26,7 +26,7 @@ export default function index() {
       <StatusBar translucent />
       <Image
         resizeMode="cover"
-        source={require("../../assets/images/onboarding-first.png")}
+        source={require("../../assets/images/onboarding-first-v2.png")}
         style={{
           width: wp(100),
           height: hp(100),
