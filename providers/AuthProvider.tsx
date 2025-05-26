@@ -48,7 +48,6 @@ export default function AuthProvider({
 
   useEffect(() => {
     const loadToken = async (): Promise<void> => {
-      console.log("Loading Token");
       try {
         const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
 
@@ -65,8 +64,6 @@ export default function AuthProvider({
             Authorization: `Bearer ${storedToken}`,
           },
         });
-
-        console.log(response);
 
         if (response.data) {
           const userData = response.data as User;
@@ -91,11 +88,9 @@ export default function AuthProvider({
       tokenRef.current = token;
 
       if (user.isVerified) {
-        console.log("User is verified, redirecting to protected route");
         router.replace("/(protected)");
         return;
       }
-      console.log(tokenRef.current, user);
       router.replace("/auth/verify");
     },
     []

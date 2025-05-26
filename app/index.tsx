@@ -21,8 +21,6 @@ export default function Index() {
     checkOnboarding();
   }, []);
 
-  console.log("isLoading", isLoading);
-  console.log("isAuthLoading", isAuthLoading);
 
   // ⛔ Avoid rendering or redirecting until both states are resolved
   if (isLoading || isAuthLoading)

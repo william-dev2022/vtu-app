@@ -62,7 +62,6 @@ export default function BuyAirtime() {
 
   // Update the function to show the bottom sheet
   const showBottomSheet = () => {
-    console.log("Pay button clicked, attempting to present BottomSheetModal");
     bottomSheetModalRef.current?.present();
     setIsModalVisible(true);
   };
@@ -134,7 +133,6 @@ export default function BuyAirtime() {
     }
     hideBottomSheet();
     setIsLoading(true);
-    console.log("Submitting request with pin:", pin);
     try {
       const storedToken = await getStorageItemAsync(USERI_TOKEN_KEY);
       const phone = phoneNumber;
@@ -187,7 +185,6 @@ export default function BuyAirtime() {
         } else if (status === 422 && data?.message) {
           toast.show(data?.message, { type: "danger" });
         } else {
-          console.log(data);
           toast.show("An unexpected error occurred. Please try again later.", {
             type: "danger",
           });

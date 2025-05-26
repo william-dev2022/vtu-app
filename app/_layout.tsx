@@ -58,7 +58,7 @@ export default function RootLayout() {
     return null;
   }
 
-  console.log("isLoaded", loaded);
+  // console.log("isLoaded", loaded);
   return <RootLayoutNav />;
 }
 

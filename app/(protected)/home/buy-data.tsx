@@ -108,8 +108,7 @@ export default function BuyData() {
   }, []);
 
   // Update the function to show the bottom sheet
-  const showBottomSheet = () => {
-    console.log("Pay button clicked, attempting to present BottomSheetModal");
+  const showBottomSheet = () => { 
     bottomSheetModalRef.current?.present();
     setIsModalVisible(true);
   };
