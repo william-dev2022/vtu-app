@@ -90,6 +90,7 @@ export default function login() {
         });
       } else {
         console.error("Error setting up request:", error.message);
+        toast.show(error.message, { type: "danger" });
       }
     } finally {
       setIsLoading(false);
