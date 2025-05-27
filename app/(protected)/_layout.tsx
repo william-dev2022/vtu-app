@@ -4,6 +4,7 @@ import useAuth from "@/context/AuthContext";
 import { Redirect, Slot, Stack, useRouter } from "expo-router";
 import { AppDataContext, AppDataProvider } from "@/providers/AppDataProvider";
 import AppLoadingIndicator from "@/components/AppLoadingIndicator";
+import AppText from "@/components/AppText";
 
 export default function _layout() {
   const { token, isLoading } = useAuth();
@@ -11,18 +12,26 @@ export default function _layout() {
   console.log("User is authenticated, token:", token);
   console.log("Is loading", isLoading);
 
-  // if (isLoading) {
-  //   return;
-  // }
+  if (isLoading) {
+    // Optionally show a loading screen
+    return null;
+  }
 
   if (!token?.current) {
     return <Redirect href="/auth/login" />;
   }
+  // if (!token?.current) {
+  //   console.log("User is not authenticated, redirecting to login");
+  //   return <Redirect href="/auth/login" />;
+  // }
+
+  console.log("User is authenticated, rendering protected layout");
 
   return (
     <AppDataProvider>
-      <AppLoadingIndicator isLoading={isLoading} />
-      <Stack initialRouteName="(tabs)">
+      {/* <AppLoadingIndicator isLoading={isLoading} /> */}
+
+      <Stack>
         <Stack.Screen
           name="(tabs)"
           options={{ headerShown: false, navigationBarHidden: true }}

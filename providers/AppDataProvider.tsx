@@ -1,8 +1,4 @@
-import {
-  API_URL,
-  BALANCE_KEY, 
-  USERI_TOKEN_KEY,
-} from "@/constants";
+import { API_URL, BALANCE_KEY, USERI_TOKEN_KEY } from "@/constants";
 import { getStorageItemAsync } from "@/helpers/secureStorage";
 import { Service, Transaction } from "@/type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -44,6 +40,9 @@ const AppDataProvider = ({ children }: { children: React.ReactNode }) => {
   // }, [transactions]);
 
   useEffect(() => {
+    console.log("AppDataProvider mounted");
+    // Load initial data
+    console.log("Loading initial data...");
     loadData();
   }, []);
 

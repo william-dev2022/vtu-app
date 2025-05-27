@@ -4,7 +4,7 @@ import { ReceiptText } from "lucide-react-native";
 import { Tabs } from "expo-router";
 import { Pressable, View } from "react-native";
 
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+// import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { ThemeContext } from "@/context/ThemeContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -26,7 +26,7 @@ export default function TabLayout() {
         initialRouteName="index"
         screenOptions={{
           tabBarActiveTintColor: colorScheme.tabBarActiveTintColor,
-          headerShown: useClientOnlyValue(false, true),
+          // headerShown: useClientOnlyValue(false, true),
           tabBarStyle: {
             backgroundColor: colorScheme.background,
             borderColor: colorScheme.secondary,

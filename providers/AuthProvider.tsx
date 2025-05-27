@@ -3,9 +3,9 @@ import {
   getStorageItemAsync,
   setStorageItemAsync,
 } from "@/helpers/secureStorage";
-import { User } from "@/type"; 
+import { User } from "@/type";
 import axios from "axios";
-import { useRouter } from "expo-router"; 
+import { useRouter } from "expo-router";
 import {
   createContext,
   MutableRefObject,
@@ -62,6 +62,8 @@ export default function AuthProvider({
             Authorization: `Bearer ${storedToken}`,
           },
         });
+
+        console.log("Response from /user endpoint:", response);
 
         if (response.data) {
           const userData = response.data as User;
