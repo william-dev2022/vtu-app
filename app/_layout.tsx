@@ -26,8 +26,7 @@ export const unstable_settings = {
   initialRouteName: "/auth/login",
 };
 import { Slot } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ONBORDING_KEY } from "@/constants";
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 

@@ -17,6 +17,7 @@ import axios from "axios";
 import { useToast } from "react-native-toast-notifications";
 import useAuth from "@/context/AuthContext";
 import { API_URL } from "@/constants";
+import { User } from "@/type";
 
 export default function login() {
   const [phoneNumber, setPhoneNumber] = useState<string>();
@@ -55,12 +56,7 @@ export default function login() {
 
       type LoginResponse = {
         token: string;
-        user: {
-          id: string;
-          name: string;
-          phoneNumber: string;
-          isVerified: boolean;
-        };
+        user: User;
       };
 
       const { token, user } = response.data as LoginResponse;
@@ -105,7 +101,7 @@ export default function login() {
       source={require("../../assets/images/onboarding-first-v2.png")}
       style={styles.contentContainer}
     >
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar translucent />
 
       <View
         style={{

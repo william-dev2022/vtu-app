@@ -19,14 +19,14 @@ type ThemeContextType = {
 };
 
 const ThemeContext = createContext<ThemeContextType>({
-  currentTheme: "light",
+  currentTheme: "dark",
   toggleTheme: () => {},
-  isDark: false,
-  colorScheme: Colors.light,
+  isDark: true,
+  colorScheme: Colors.dark,
 });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<ThemeType>("light");
+  const [theme, setTheme] = useState<ThemeType>("dark");
 
   useEffect(() => {
     const loadTheme = async () => {

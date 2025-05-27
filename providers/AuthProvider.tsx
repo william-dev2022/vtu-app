@@ -3,11 +3,9 @@ import {
   getStorageItemAsync,
   setStorageItemAsync,
 } from "@/helpers/secureStorage";
-import { User } from "@/type";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User } from "@/type"; 
 import axios from "axios";
-import { useRouter } from "expo-router";
-import { store } from "expo-router/build/global-state/router-store";
+import { useRouter } from "expo-router"; 
 import {
   createContext,
   MutableRefObject,
@@ -87,8 +85,10 @@ export default function AuthProvider({
       setUser(user);
       tokenRef.current = token;
 
+      console.log(token, user);
+
       if (user.isVerified) {
-        router.replace("/(protected)");
+        router.replace("/(protected)/(tabs)");
         return;
       }
       router.replace("/auth/verify");

@@ -21,7 +21,6 @@ export default function Index() {
     checkOnboarding();
   }, []);
 
-
   // ⛔ Avoid rendering or redirecting until both states are resolved
   if (isLoading || isAuthLoading)
     return <AppLoadingIndicator isLoading={isLoading || isAuthLoading} />;
@@ -32,7 +31,7 @@ export default function Index() {
 
   if (token && user) {
     if (user.isVerified) {
-      return <Redirect href="/(protected)" />;
+      return <Redirect href="/(protected)/(tabs)" />;
     }
     return <Redirect href="/auth/verify" />;
   }

@@ -74,12 +74,7 @@ const CreatePinInfoCard = () => {
         width: "100%",
       }}
     >
-      <Feather
-        name="info"
-        size={14}
-        color={colorScheme.text}
-        style={{ marginTop: 5 }}
-      />
+      <Feather name="info" size={14} color={"white"} style={{ marginTop: 5 }} />
       <AppText
         style={{
           flex: 1,
@@ -88,6 +83,7 @@ const CreatePinInfoCard = () => {
           textDecorationColor: colorScheme.text,
           fontFamily: "Krub_400Regular_Italic",
           fontSize: 14,
+          color: "white",
         }}
       >
         Click to set up a transaction pin. This will be required for all

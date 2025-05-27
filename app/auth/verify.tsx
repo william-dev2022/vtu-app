@@ -194,7 +194,7 @@ export default function verify() {
       source={require("../../assets/images/onboarding-first-v2.png")}
       style={styles.contentContainer}
     >
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar translucent />
 
       <View
         style={{

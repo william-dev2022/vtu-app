@@ -113,7 +113,7 @@ export default function register() {
       source={require("../../assets/images/onboarding-first-v2.png")}
       style={styles.contentContainer}
     >
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar translucent />
       <View
         style={{
           backgroundColor: "rgba(0, 0, 0, 0.5)",
