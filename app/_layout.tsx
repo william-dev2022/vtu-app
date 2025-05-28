@@ -78,7 +78,7 @@ const toastConfig: Omit<ToastProviderProps, "children"> = {
   ),
   textStyle: { fontSize: 20 },
   offset: 50, // offset for both top and bottom toasts
-  offsetTop: 40,
+  offsetTop: 20,
   offsetBottom: 40,
   swipeEnabled: true,
   renderType: {

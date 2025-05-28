@@ -2,6 +2,10 @@ import { View, Text, ActivityIndicator } from "react-native";
 import React from "react";
 import { hp, wp } from "@/helpers/common";
 
+import { Dimensions } from "react-native";
+
+const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
+
 export default function AppLoadingIndicator({
   isLoading = false,
 }: {
@@ -22,8 +26,8 @@ export default function AppLoadingIndicator({
         bottom: 0,
         left: 0,
         right: 0,
-        height: hp(100),
-        width: wp(100),
+        height: deviceHeight,
+        width: deviceWidth,
         backgroundColor: "rgb(0, 0, 0)",
         opacity: 0.4,
       }}

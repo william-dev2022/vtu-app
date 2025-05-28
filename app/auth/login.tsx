@@ -127,6 +127,7 @@ export default function login() {
         </AppText>
         <TextInput
           placeholder="Phone Number"
+          placeholderTextColor="#000"
           style={{
             marginBottom: 25,
             backgroundColor: "rgba(232, 229, 229, 0.72)",
@@ -134,6 +135,7 @@ export default function login() {
             padding: 14,
             borderRadius: 8,
             fontFamily: "Krub_600SemiBold",
+            color: "#000",
           }}
           maxLength={11}
           keyboardType="phone-pad"
@@ -142,6 +144,7 @@ export default function login() {
         <TextInput
           placeholder="Password"
           secureTextEntry={true}
+          placeholderTextColor="#000"
           style={{
             marginBottom: 25,
             backgroundColor: "rgba(232, 229, 229, 0.72)",
@@ -149,6 +152,7 @@ export default function login() {
             padding: 14,
             borderRadius: 8,
             fontFamily: "Krub_600SemiBold",
+            color: "#000",
           }}
           onChangeText={setPassword}
         />
@@ -167,6 +171,7 @@ export default function login() {
               borderBottomWidth: 1,
               borderBottomColor: "rgba(255, 255, 255, 0.5)",
               borderStyle: "dashed",
+              padding: 5,
             }}
           >
             <AppText

@@ -35,7 +35,7 @@ export default function profile() {
   };
 
   return (
-    <ThemedContainer style={{ paddingTop: 60 }}>
+    <ThemedContainer style={{ paddingTop: 20 }}>
       <View
         style={{
           flexDirection: "row",

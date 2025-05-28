@@ -1,13 +1,12 @@
-import { View, Text } from "react-native";
 import React from "react";
 import useAuth from "@/context/AuthContext";
-import { Redirect, Slot, Stack, useRouter } from "expo-router";
-import { AppDataContext, AppDataProvider } from "@/providers/AppDataProvider";
-import AppLoadingIndicator from "@/components/AppLoadingIndicator";
-import AppText from "@/components/AppText";
+import { Redirect, Stack } from "expo-router";
+import { AppDataProvider } from "@/providers/AppDataProvider";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function _layout() {
   const { token, isLoading } = useAuth();
+  const { colorScheme } = useTheme();
 
   console.log("User is authenticated, token:", token);
   console.log("Is loading", isLoading);
@@ -20,18 +19,16 @@ export default function _layout() {
   if (!token?.current) {
     return <Redirect href="/auth/login" />;
   }
-  // if (!token?.current) {
-  //   console.log("User is not authenticated, redirecting to login");
-  //   return <Redirect href="/auth/login" />;
-  // }
-
   console.log("User is authenticated, rendering protected layout");
 
   return (
     <AppDataProvider>
       {/* <AppLoadingIndicator isLoading={isLoading} /> */}
-
-      <Stack>
+      <Stack
+        screenOptions={{
+          statusBarBackgroundColor: colorScheme.background,
+        }}
+      >
         <Stack.Screen
           name="(tabs)"
           options={{ headerShown: false, navigationBarHidden: true }}

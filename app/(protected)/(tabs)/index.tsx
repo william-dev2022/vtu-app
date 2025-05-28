@@ -134,11 +134,8 @@ const Header = () => {
 
           <AppText>
             {/* Welcome,{" "} */}
-            <AppText bold style={{ fontSize: 15 }}>
-              {user
-                ? user.name.substring(0, 1).toUpperCase() +
-                  user.name.substring(1).toLowerCase()
-                : "Alex"}
+            <AppText bold style={{ fontSize: 16, textTransform: "capitalize" }}>
+              {user ? user.name : "Alex"}
             </AppText>
           </AppText>
         </View>
@@ -200,7 +197,7 @@ const Header = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 60,
+    marginTop: 20,
     rowGap: 30,
     // backgroundColor: "red",
   },

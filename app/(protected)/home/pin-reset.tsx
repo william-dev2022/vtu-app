@@ -66,6 +66,7 @@ export default function CableSubscription() {
         setIsLoading(false);
         return;
       }
+      console.log("Pin", pin);
       const response = await axios.post(
         `${API_URL}/account/set-pin`,
         {
@@ -80,6 +81,8 @@ export default function CableSubscription() {
         }
       );
 
+      console.log("Response from set-pin API:");
+      console.log(response.data);
       if (response.status === 200) {
         // Handle success
         toast.show("Pin set successfully", {
@@ -145,9 +148,9 @@ export default function CableSubscription() {
       <View style={{ flex: 1, marginTop: 20, rowGap: 20 }}>
         <TextInput
           placeholder="Pin"
-          value={"•".repeat(pin.length)}
+          value={pin}
           placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.8)}
-          keyboardType="phone-pad"
+          keyboardType="number-pad"
           maxLength={4}
           secureTextEntry={true}
           onChangeText={setPin}
@@ -164,7 +167,8 @@ export default function CableSubscription() {
 
         <TextInput
           placeholder="Enter Pin Again"
-          value={"•".repeat(confirmPin.length)}
+          keyboardType="number-pad"
+          value={confirmPin}
           onChangeText={setConfirmPin}
           secureTextEntry={true}
           placeholderTextColor={applyOpacityToColor(colorScheme.text, 0.5)}

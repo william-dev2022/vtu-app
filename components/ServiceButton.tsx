@@ -27,7 +27,7 @@ export const ServiceButton = ({ name, status }: Service) => {
   const { currentTheme } = useContext(ThemeContext);
   const router = useRouter();
 
-  console.log("ServiceButton rendered with name:", name, "and status:", status);
+  // console.log("ServiceButton rendered with name:", name, "and status:", status);
 
   const colorScheme = currentTheme === "dark" ? Colors.dark : Colors.light;
   const serviceName = name.toLowerCase();

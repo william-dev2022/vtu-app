@@ -43,7 +43,6 @@ export default function _layout() {
     headerShown: true,
     navigationBarHidden: true,
     title,
-
     headerBackVisible: false,
     headerStyle: {
       backgroundColor: colorScheme.background,
@@ -99,9 +98,7 @@ export default function _layout() {
           />
           <Stack.Screen
             name="exam-pin"
-            options={{
-              headerShown: true, // Optional: Hides the header for a cleaner modal look
-            }}
+            options={screenOptions("Exam Pin", false)}
           />
           <Stack.Screen
             name="pin-reset"

@@ -131,6 +131,7 @@ export default function BuyAirtime() {
       toast.show("Please enter a valid pin", { type: "danger" });
       return;
     }
+    console.log("Submitting request with pin:", pin);
     hideBottomSheet();
     setIsLoading(true);
     try {

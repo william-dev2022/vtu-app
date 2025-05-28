@@ -1,7 +1,13 @@
 import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { useContext } from "react";
-import { Dimensions, StyleSheet, View, ViewStyle } from "react-native";
+import {
+  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 
 export default function ThemedContainer({
   children,
@@ -26,11 +32,6 @@ export default function ThemedContainer({
         style,
       ]}
     >
-      <StatusBar
-        style={isDark ? "light" : "dark"}
-        backgroundColor="transparent"
-        translucent
-      />
       {children}
     </View>
   );

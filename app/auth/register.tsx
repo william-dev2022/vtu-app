@@ -131,12 +131,14 @@ export default function register() {
           Register
         </AppText>
         <TextInput
+          placeholderTextColor="#000"
           placeholder="Name"
           style={styles.textInput}
           autoComplete="name"
           onChangeText={setName}
         />
         <TextInput
+          placeholderTextColor="#000"
           placeholder="Phone Number"
           keyboardType="phone-pad"
           maxLength={11}
@@ -144,12 +146,14 @@ export default function register() {
           onChangeText={setPhoneNumber}
         />
         <TextInput
+          placeholderTextColor="#000"
           placeholder="Password"
           secureTextEntry={true}
           style={styles.textInput}
           onChangeText={setPassword}
         />
         <TextInput
+          placeholderTextColor="#000"
           placeholder="Confirm Password"
           secureTextEntry={true}
           style={styles.textInput}
@@ -235,7 +239,8 @@ const styles = StyleSheet.create({
     padding: 14,
     width: wp(85),
     borderRadius: 8,
-    fontFamily: "Krub_400Regular",
+    fontFamily: "Krub_600SemiBold",
+    color: "#000",
   },
 
   startButton: {
